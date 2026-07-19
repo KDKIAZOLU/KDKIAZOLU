@@ -48,9 +48,12 @@
     // sandboxed and the plain Blob-URL + <a download> click below is
     // silently swallowed - file saves have to go through the host's
     // window.claude.downloads bridge instead. That bridge only accepts a
-    // fixed extension allowlist (no .csv), so CSV exports get renamed to
-    // .txt in that path; the file contents (comma-delimited text) don't
-    // change, so the data still opens fine in Excel/Sheets via "Import".
+    // fixed extension allowlist (gif png jpg jpeg webp mp4 webm txt json
+    // md - notably no .csv, .xlsx, .docx, or .pdf). CSV exports get
+    // renamed to .txt in that path (the comma-delimited content is still
+    // perfectly importable in Excel/Sheets); .xlsx/.docx/.pdf are binary
+    // formats that can't be renamed around the allowlist, so those saves
+    // are only available when the app is opened outside this preview.
     if (window.claude && window.claude.downloads && window.claude.downloads.save) {
       var claudeFilename = /\.csv$/i.test(filename) ? filename.replace(/\.csv$/i, '.txt') : filename;
       window.claude.downloads.save({ filename: claudeFilename, data: content })
@@ -60,6 +63,7 @@
           if (code === 'declined') return; // user said no - don't nag
           if (code === 'rate_limited') { toast('A save prompt is already open — try again in a moment.', 'error'); return; }
           if (code === 'too_large') { toast('This export is too large to save from this preview (16 MiB limit). Narrow your filters and try again.', 'error'); return; }
+          if (code === 'rejected_extension') { toast('This file format isn’t downloadable from this preview. Use CSV/JSON here, or open the app outside the preview for Excel/PDF/Word.', 'error'); return; }
           toast('Could not save the file from this preview. Try opening the app directly (outside the preview) instead.', 'error');
         });
       return;
@@ -604,27 +608,71 @@
       'Shirt Size': s.uniformShirtSize,
       'Pants Size': s.uniformPantsSize,
       'Uniform Color': s.uniformColor,
+      'Household Needs': f ? (f.householdNeeds || []).join('; ') : '',
       'McKinney-Vento Eligible': f ? (f.eligibility.eligible === true ? 'Yes' : f.eligibility.eligible === false ? 'No' : 'Needs Review') : '',
       'Eligibility Category': f ? f.eligibility.category : ''
     };
   }
-  function rowsToCsv(rows) {
+  function objectRowsToTable(rows, keys) {
+    var headers = keys || (rows.length ? Object.keys(rows[0]) : []);
+    var body = rows.map(function (r) { return headers.map(function (h) { return r[h]; }); });
+    return { headers: headers, rows: body };
+  }
+  function rowsToCsv(rows, keys) {
     if (!rows.length) return '';
-    var headers = Object.keys(rows[0]);
-    var out = [headers].concat(rows.map(function (r) { return headers.map(function (h) { return r[h]; }); }));
+    var table = objectRowsToTable(rows, keys);
+    var out = [table.headers].concat(table.rows);
     return window.MVCsv.stringify(out);
   }
 
-  $('#btnExportFamiliesCSV').addEventListener('click', function () {
-    var rows = getFilteredFamilies().map(familyToRow);
-    if (!rows.length) return toast('No families match the current filters.', 'error');
-    downloadBlob(rowsToCsv(rows), 'families_filtered.csv', 'text/csv;charset=utf-8;');
+  // Full-fidelity column sets (CSV/Excel) come from familyToRow/studentToRow
+  // directly. PDF/Word are print-formatted reports, not data dumps, so they
+  // use a condensed column set that actually fits on a page.
+  var REPORT_FAMILY_KEYS = ['Parent/Guardian Name', 'Current Address', 'Living Situation (raw)', 'Eligibility Category', 'McKinney-Vento Eligible', 'Number of Students', 'Household Needs'];
+  var REPORT_STUDENT_KEYS = ['Student Name', 'School (corrected)', 'Date of Birth', 'Age', 'Needs Uniform', 'Uniform Size Group', 'Household Needs', 'McKinney-Vento Eligible'];
+
+  function currentExportSelection() {
+    var mode = $('#exportDataType').value; // 'families' | 'students'
+    if (mode === 'families') {
+      return { mode: mode, rows: getFilteredFamilies().map(familyToRow), reportKeys: REPORT_FAMILY_KEYS, label: 'families' };
+    }
+    return { mode: mode, rows: getFilteredStudents().map(studentToRow), reportKeys: REPORT_STUDENT_KEYS, label: 'students' };
+  }
+
+  $('#btnExportCSV').addEventListener('click', function () {
+    var sel = currentExportSelection();
+    if (!sel.rows.length) return toast('No ' + sel.label + ' match the current filters.', 'error');
+    downloadBlob(rowsToCsv(sel.rows), sel.label + '_filtered.csv', 'text/csv;charset=utf-8;');
   });
-  $('#btnExportStudentsCSV').addEventListener('click', function () {
-    var rows = getFilteredStudents().map(studentToRow);
-    if (!rows.length) return toast('No students match the current filters.', 'error');
-    downloadBlob(rowsToCsv(rows), 'students_filtered.csv', 'text/csv;charset=utf-8;');
+
+  $('#btnExportXLSX').addEventListener('click', function () {
+    var sel = currentExportSelection();
+    if (!sel.rows.length) return toast('No ' + sel.label + ' match the current filters.', 'error');
+    var table = objectRowsToTable(sel.rows);
+    var bytes = window.MVXlsxWriter.buildXlsx(sel.label, table.headers, table.rows);
+    downloadBlob(bytes, sel.label + '_filtered.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   });
+
+  $('#btnExportPDF').addEventListener('click', function () {
+    var sel = currentExportSelection();
+    if (!sel.rows.length) return toast('No ' + sel.label + ' match the current filters.', 'error');
+    var table = objectRowsToTable(sel.rows, sel.reportKeys);
+    var title = 'McKinney-Vento Survey Manager — ' + (sel.label === 'families' ? 'Families' : 'Students') + ' Report';
+    var subtitle = table.rows.length + ' record(s) · exported ' + new Date().toLocaleString() + ' · filters applied as shown on the Dashboard';
+    var bytes = window.MVPdfWriter.buildPdf(title, subtitle, table.headers, table.rows);
+    downloadBlob(bytes, sel.label + '_filtered.pdf', 'application/pdf');
+  });
+
+  $('#btnExportDOCX').addEventListener('click', function () {
+    var sel = currentExportSelection();
+    if (!sel.rows.length) return toast('No ' + sel.label + ' match the current filters.', 'error');
+    var table = objectRowsToTable(sel.rows, sel.reportKeys);
+    var title = 'McKinney-Vento Survey Manager — ' + (sel.label === 'families' ? 'Families' : 'Students') + ' Report';
+    var subtitle = table.rows.length + ' record(s) · exported ' + new Date().toLocaleString();
+    var bytes = window.MVDocxWriter.buildDocx(title, subtitle, table.headers, table.rows);
+    downloadBlob(bytes, sel.label + '_filtered.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  });
+
   $('#btnExportJSON').addEventListener('click', function () {
     var families = getFilteredFamilies().map(function (f) {
       var copy = Object.assign({}, f);
@@ -643,8 +691,8 @@
 
   var FAMILY_COLUMNS = ['parentName', 'currentAddress', 'livingSituation', 'eligibility.category', 'eligibility.eligible', 'studentCount', 'householdNeeds'];
   var FAMILY_HEADERS = ['Parent/Guardian', 'Address', 'Living Situation', 'Category', 'Eligible', '# Students', 'Household Needs'];
-  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'schoolNeedsReview'];
-  var STUDENT_HEADERS = ['Student Name', 'School', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'School Flagged'];
+  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'householdNeeds', 'schoolNeedsReview'];
+  var STUDENT_HEADERS = ['Student Name', 'School', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Household Needs', 'School Flagged'];
 
   function getPath(obj, path) {
     return path.split('.').reduce(function (o, k) { return o == null ? null : o[k]; }, obj);
@@ -680,7 +728,13 @@
     pageData.forEach(function (r) {
       var tr = document.createElement('tr');
       cols.forEach(function (c) {
-        var val = getPath(r, c);
+        var val;
+        if (c === 'householdNeeds' && mode === 'students') {
+          var ownerFamily = state.families.find(function (f) { return f.id === r.familyId; });
+          val = ownerFamily ? ownerFamily.householdNeeds : [];
+        } else {
+          val = getPath(r, c);
+        }
         if (Array.isArray(val)) val = val.join(', ');
         if (val === true) val = 'Yes';
         if (val === false) val = 'No';
