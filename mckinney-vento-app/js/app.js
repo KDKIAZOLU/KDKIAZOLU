@@ -879,4 +879,7 @@
   // ---------------------------------------------------------------- init
   renderSettingsTab();
   updateStatusBar();
+  if (window.claude && window.claude.downloads) {
+    $('#previewDownloadNote').classList.remove('hidden');
+  }
 })();
