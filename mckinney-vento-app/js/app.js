@@ -601,6 +601,10 @@
       'Age': s.dobAge,
       'School (as entered)': s.schoolNameRaw,
       'School (corrected)': s.schoolNameCorrected,
+      'School Address': s.schoolAddress,
+      'School Zip': s.schoolZip,
+      'School Grades Served': s.schoolGrades,
+      'School Management Type': s.schoolManagementType,
       'School Match Method': s.schoolMatchMethod,
       'School Match Confidence': s.schoolMatchScore != null ? Math.round(s.schoolMatchScore * 100) + '%' : '',
       'Needs Uniform': s.needsUniform === true ? 'Yes' : s.needsUniform === false ? 'No' : '',
@@ -691,8 +695,8 @@
 
   var FAMILY_COLUMNS = ['parentName', 'currentAddress', 'livingSituation', 'eligibility.category', 'eligibility.eligible', 'studentCount', 'householdNeeds'];
   var FAMILY_HEADERS = ['Parent/Guardian', 'Address', 'Living Situation', 'Category', 'Eligible', '# Students', 'Household Needs'];
-  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'householdNeeds', 'schoolNeedsReview'];
-  var STUDENT_HEADERS = ['Student Name', 'School', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Household Needs', 'School Flagged'];
+  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'schoolAddress', 'schoolZip', 'schoolGrades', 'schoolManagementType', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'householdNeeds', 'schoolNeedsReview'];
+  var STUDENT_HEADERS = ['Student Name', 'School', 'School Address', 'Zip', 'Grades Served', 'Management Type', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Household Needs', 'School Flagged'];
 
   function getPath(obj, path) {
     return path.split('.').reduce(function (o, k) { return o == null ? null : o[k]; }, obj);
@@ -821,13 +825,37 @@
           headers = parsed.rows[0];
           rows = parsed.rows.slice(1);
         }
-        var nameColIdx = -1, bestScore = 0;
-        headers.forEach(function (h, i) {
-          var c = window.MVSchema.classifyHeader(h, [{ id: 'schoolName', synonyms: ['school name', 'name of school', 'nombre de la escuela'] }]);
-          if (c && c.score > bestScore) { bestScore = c.score; nameColIdx = i; }
+        // The main school name column is required; address/zip/grades/
+        // management type are optional extras carried through if the
+        // replacement file happens to have equivalent columns, using the
+        // same header-synonym matching as the main survey import so a
+        // future year's list works without any code changes.
+        var REF_FIELDS = [
+          { id: 'name', synonyms: ['school name', 'name of school', 'nombre de la escuela'], required: true },
+          { id: 'address', synonyms: ['address', 'street address'], required: false },
+          { id: 'zip', synonyms: ['zip', 'zip code', 'postal code'], required: false },
+          { id: 'grades', synonyms: ['current grades served', 'grades served', 'grade configuration'], required: false },
+          { id: 'mgmt', synonyms: ['management type'], required: false }
+        ];
+        var colIdxByField = {};
+        REF_FIELDS.forEach(function (field) {
+          var best = -1, bestFieldScore = 0;
+          headers.forEach(function (h, i) {
+            var c = window.MVSchema.classifyHeader(h, [{ id: field.id, synonyms: field.synonyms }]);
+            if (c && c.score > bestFieldScore) { bestFieldScore = c.score; best = i; }
+          });
+          if (best !== -1) colIdxByField[field.id] = best;
         });
-        if (nameColIdx === -1) { toast('Could not find a "School Name" column in that file.', 'error'); return; }
-        var schools = rows.map(function (r) { return { name: clean.trim(r[nameColIdx]) }; }).filter(function (s) { return s.name; });
+        if (colIdxByField.name == null) { toast('Could not find a "School Name" column in that file.', 'error'); return; }
+        var schools = rows.map(function (r) {
+          return {
+            name: clean.trim(r[colIdxByField.name]),
+            address: colIdxByField.address != null ? clean.trim(r[colIdxByField.address]) : '',
+            zip: colIdxByField.zip != null ? clean.trim(r[colIdxByField.zip]) : '',
+            grades: colIdxByField.grades != null ? clean.trim(r[colIdxByField.grades]) : '',
+            mgmt: colIdxByField.mgmt != null ? clean.trim(r[colIdxByField.mgmt]) : ''
+          };
+        }).filter(function (s) { return s.name; });
         window.MVStore.setCustomSchoolList(schools, {});
         toast('Replaced school reference list with ' + schools.length + ' schools from "' + file.name + '".', 'success');
         renderSettingsTab();

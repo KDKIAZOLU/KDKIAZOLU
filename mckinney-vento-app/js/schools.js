@@ -42,9 +42,20 @@
   SchoolMatcher.prototype._buildIndex = function () {
     var self = this;
     this._exactIndex = {};
+    this._recordByName = {};
     this.referenceList.forEach(function (s) {
       self._exactIndex[key(s.name)] = s.name;
+      self._recordByName[key(s.name)] = s;
     });
+  };
+
+  // Full reference-list record (address/zip/grades/management type, etc.)
+  // for an official school name, e.g. the value returned as `matched` by
+  // match(). Returns null if the name isn't in the current reference list
+  // (can happen with a user-uploaded replacement list that lacks those
+  // extra columns, or a name a manual override typed in by hand).
+  SchoolMatcher.prototype.getRecordByName = function (officialName) {
+    return this._recordByName[key(officialName)] || null;
   };
 
   SchoolMatcher.prototype.setOverride = function (rawInput, officialName) {

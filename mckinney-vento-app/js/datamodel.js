@@ -104,12 +104,22 @@
       student.schoolMatchMethod = match.method;
       student.schoolMatchScore = match.score;
       student.schoolNeedsReview = match.needsReview;
+
+      var schoolRecord = match.matched ? schoolMatcher.getRecordByName(match.matched) : null;
+      student.schoolAddress = schoolRecord ? (schoolRecord.address || '') : '';
+      student.schoolZip = schoolRecord ? (schoolRecord.zip || '') : '';
+      student.schoolGrades = schoolRecord ? (schoolRecord.grades || '') : '';
+      student.schoolManagementType = schoolRecord ? (schoolRecord.mgmt || '') : '';
     } else {
       student.schoolNameRaw = student.schoolName || '';
       student.schoolNameCorrected = student.schoolName || '';
       student.schoolMatchMethod = 'n/a';
       student.schoolMatchScore = 0;
       student.schoolNeedsReview = !!student.schoolName;
+      student.schoolAddress = '';
+      student.schoolZip = '';
+      student.schoolGrades = '';
+      student.schoolManagementType = '';
     }
 
     return student;
