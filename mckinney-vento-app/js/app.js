@@ -880,6 +880,10 @@
   renderSettingsTab();
   updateStatusBar();
   if (window.claude && window.claude.downloads) {
+    // The claude.ai downloads bridge only accepts a fixed extension
+    // allowlist (images, mp4/webm, txt/json/md) - .xlsx/.docx/.pdf will
+    // always be rejected there, so don't show buttons that can only fail.
     $('#previewDownloadNote').classList.remove('hidden');
+    $all('.requires-full-browser').forEach(function (btn) { btn.classList.add('hidden'); });
   }
 })();
