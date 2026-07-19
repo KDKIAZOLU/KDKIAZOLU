@@ -44,6 +44,26 @@
     setTimeout(function () { t.remove(); }, 4500);
   }
   function downloadBlob(content, filename, mime) {
+    // When this app is running inside a claude.ai Artifact preview, it's
+    // sandboxed and the plain Blob-URL + <a download> click below is
+    // silently swallowed - file saves have to go through the host's
+    // window.claude.downloads bridge instead. That bridge only accepts a
+    // fixed extension allowlist (no .csv), so CSV exports get renamed to
+    // .txt in that path; the file contents (comma-delimited text) don't
+    // change, so the data still opens fine in Excel/Sheets via "Import".
+    if (window.claude && window.claude.downloads && window.claude.downloads.save) {
+      var claudeFilename = /\.csv$/i.test(filename) ? filename.replace(/\.csv$/i, '.txt') : filename;
+      window.claude.downloads.save({ filename: claudeFilename, data: content })
+        .then(function () { toast('Saved "' + claudeFilename + '".', 'success'); })
+        .catch(function (err) {
+          var code = err && err.code;
+          if (code === 'declined') return; // user said no - don't nag
+          if (code === 'rate_limited') { toast('A save prompt is already open — try again in a moment.', 'error'); return; }
+          if (code === 'too_large') { toast('This export is too large to save from this preview (16 MiB limit). Narrow your filters and try again.', 'error'); return; }
+          toast('Could not save the file from this preview. Try opening the app directly (outside the preview) instead.', 'error');
+        });
+      return;
+    }
     var blob = new Blob([content], { type: mime });
     var url = URL.createObjectURL(blob);
     var a = el('a', { href: url, download: filename });
