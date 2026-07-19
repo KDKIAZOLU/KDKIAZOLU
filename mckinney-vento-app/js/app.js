@@ -563,7 +563,14 @@
   }
 
   window.addEventListener('resize', debounce(function () { if (state.families.length) renderDashboard(); }, 200));
-  function debounce(fn, ms) { var t; return function () { clearTimeout(t); var a = arguments; t = setTimeout(function () { fn.apply(null, a); }, ms); }; }
+  function debounce(fn, ms) {
+    var t;
+    return function () {
+      var ctx = this, a = arguments;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(ctx, a); }, ms);
+    };
+  }
 
   // ---------------------------------------------------------------- export
   function familyToRow(f) {
@@ -587,7 +594,9 @@
       'Household Needs': (f.householdNeeds || []).join('; '),
       'Household Needs Description': f.householdNeedsDescription,
       'Student Names': studs.map(function (s) { return s.studentName; }).join('; '),
-      'Schools': studs.map(function (s) { return s.schoolNameCorrected; }).join('; ')
+      'Schools': studs.map(function (s) { return s.schoolNameCorrected; }).join('; '),
+      'Possible Nearby Schools (same ZIP, approximate)': (f.nearbySchools || []).join('; '),
+      'Official Zoning Map': window.MVZoning.ZONING_MAP_URL
     };
   }
   function studentToRow(s) {
@@ -613,6 +622,8 @@
       'Pants Size': s.uniformPantsSize,
       'Uniform Color': s.uniformColor,
       'Household Needs': f ? (f.householdNeeds || []).join('; ') : '',
+      'Possible Nearby Schools (same ZIP, approximate)': (s.nearbySchools || []).join('; '),
+      'Official Zoning Map': window.MVZoning.ZONING_MAP_URL,
       'McKinney-Vento Eligible': f ? (f.eligibility.eligible === true ? 'Yes' : f.eligibility.eligible === false ? 'No' : 'Needs Review') : '',
       'Eligibility Category': f ? f.eligibility.category : ''
     };
@@ -693,10 +704,34 @@
   $('#recordsPrev').addEventListener('click', function () { if (state.records.page > 1) { state.records.page--; renderRecordsTab(); } });
   $('#recordsNext').addEventListener('click', function () { state.records.page++; renderRecordsTab(); });
 
-  var FAMILY_COLUMNS = ['parentName', 'currentAddress', 'livingSituation', 'eligibility.category', 'eligibility.eligible', 'studentCount', 'householdNeeds'];
-  var FAMILY_HEADERS = ['Parent/Guardian', 'Address', 'Living Situation', 'Category', 'Eligible', '# Students', 'Household Needs'];
-  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'schoolAddress', 'schoolZip', 'schoolGrades', 'schoolManagementType', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'householdNeeds', 'schoolNeedsReview'];
-  var STUDENT_HEADERS = ['Student Name', 'School', 'School Address', 'Zip', 'Grades Served', 'Management Type', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Household Needs', 'School Flagged'];
+  var FAMILY_COLUMNS = ['parentName', 'currentAddress', 'livingSituation', 'eligibility.category', 'eligibility.eligible', 'studentCount', 'householdNeeds', 'nearbySchools', 'checkZoning'];
+  var FAMILY_HEADERS = ['Parent/Guardian', 'Address', 'Living Situation', 'Category', 'Eligible', '# Students', 'Household Needs', 'Possible Nearby Schools (same ZIP)', 'Zoning'];
+  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'schoolAddress', 'schoolZip', 'schoolGrades', 'schoolManagementType', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'householdNeeds', 'nearbySchools', 'checkZoning', 'schoolNeedsReview'];
+  var STUDENT_HEADERS = ['Student Name', 'School', 'School Address', 'Zip', 'Grades Served', 'Management Type', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Household Needs', 'Possible Nearby Schools (same ZIP)', 'Zoning', 'School Flagged'];
+
+  // "Check Zoning" never auto-transmits the address anywhere - it only
+  // copies it to the clipboard (a browser-local action) and opens the
+  // district's own live zoning map in a new tab for the user to paste
+  // it into themselves. See js/zoning.js for why this app doesn't try to
+  // determine zoning itself.
+  function handleCheckZoningClick(address) {
+    var addr = clean.trim(address);
+    if (!addr) { toast('No address on file for this record.', 'error'); return; }
+    var opened = window.open(window.MVZoning.ZONING_MAP_URL, '_blank', 'noopener');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(addr).then(function () {
+        toast(opened
+          ? 'Address copied — paste it into the map’s search box to find zoned schools.'
+          : 'Address copied. Pop-up blocked — allow pop-ups for this page, or open the zoning map manually and paste it in.',
+          opened ? 'success' : 'error');
+      }).catch(function () {
+        toast(opened ? 'Opened the zoning map. Address to look up: ' + addr : 'Pop-up blocked. Address to look up: ' + addr, opened ? 'success' : 'error');
+      });
+    } else {
+      toast(opened ? 'Opened the zoning map. Address to look up: ' + addr : 'Pop-up blocked. Address to look up: ' + addr, opened ? 'success' : 'error');
+    }
+  }
 
   function getPath(obj, path) {
     return path.split('.').reduce(function (o, k) { return o == null ? null : o[k]; }, obj);
@@ -731,10 +766,18 @@
     var cols = mode === 'families' ? FAMILY_COLUMNS : STUDENT_COLUMNS;
     pageData.forEach(function (r) {
       var tr = document.createElement('tr');
+      var ownerFamily = mode === 'students' ? state.families.find(function (f) { return f.id === r.familyId; }) : r;
       cols.forEach(function (c) {
+        if (c === 'checkZoning') {
+          var td = document.createElement('td');
+          var btn = el('button', { class: 'btn btn-sm', text: '📍 Check Zoning' });
+          btn.addEventListener('click', function () { handleCheckZoningClick(ownerFamily ? ownerFamily.currentAddress : ''); });
+          td.appendChild(btn);
+          tr.appendChild(td);
+          return;
+        }
         var val;
         if (c === 'householdNeeds' && mode === 'students') {
-          var ownerFamily = state.families.find(function (f) { return f.id === r.familyId; });
           val = ownerFamily ? ownerFamily.householdNeeds : [];
         } else {
           val = getPath(r, c);

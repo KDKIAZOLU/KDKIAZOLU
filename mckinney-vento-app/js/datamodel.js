@@ -156,6 +156,21 @@
       family.studentIds = rowStudents.map(function (s) { return s.id; });
       family.studentCount = rowStudents.length;
 
+      if (schoolMatcher && global.MVZoning) {
+        var familyNearby = global.MVZoning.findNearbySchools(schoolMatcher.referenceList, family.currentAddress, null, 5);
+        family.zoningZip = familyNearby.zip;
+        family.nearbySchools = familyNearby.schools.map(function (s) { return s.name; });
+
+        rowStudents.forEach(function (s) {
+          var studentNearby = global.MVZoning.findNearbySchools(schoolMatcher.referenceList, family.currentAddress, s.dobAge, 5);
+          s.nearbySchools = studentNearby.schools.map(function (sch) { return sch.name; });
+        });
+      } else {
+        family.zoningZip = null;
+        family.nearbySchools = [];
+        rowStudents.forEach(function (s) { s.nearbySchools = []; });
+      }
+
       families.push(family);
 
       // --- Data quality issue detection ---

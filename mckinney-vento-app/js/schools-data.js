@@ -1208,14 +1208,6 @@
     "mgmt": "Traditional - Virtual"
   },
   {
-    "num": "Number",
-    "name": "Program",
-    "address": "Address",
-    "zip": "Zip",
-    "grades": "Current Grades Served",
-    "mgmt": "Management Type"
-  },
-  {
     "num": 303,
     "name": "Health & Specialized Student Services",
     "address": "1500 Harlem Avenue",
