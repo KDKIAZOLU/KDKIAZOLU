@@ -195,6 +195,9 @@
       if (elig.needsReview) {
         issues.push({ level: 'review', familyId: family.id, field: 'eligibility', message: elig.basis });
       }
+      if (elig.contradictionFlags && elig.contradictionFlags.length) {
+        issues.push({ level: 'review', familyId: family.id, field: 'eligibility', message: 'Reported stable owned/leased housing, but also flagged: ' + elig.contradictionFlags.join('; ') + '. Counted as Not Eligible per the primary response - worth a human double-check.' });
+      }
       if (rowStudents.length === 0) {
         issues.push({ level: 'warning', familyId: family.id, field: 'students', message: 'No students listed on this submission.' });
       }

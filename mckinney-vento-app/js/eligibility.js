@@ -46,15 +46,26 @@
    *   livingSituation, stayingWithOthers (bool|null), timeLimitOnStay (bool|null),
    *   housingSafeAdequate (string englishPortion), housingPermanent (string englishPortion)
    *
-   * The statute requires a residence to be fixed AND regular AND adequate
-   * for a family to be considered NOT homeless - so failing any single one
-   * of those three (surfaced here via four follow-up questions: staying
-   * with others due to hardship and time-limited stay both speak to
-   * "regular"; safety/adequacy speaks to "adequate"; intended permanence
-   * speaks to "fixed") is dispositive on its own. It doesn't matter what
-   * the primary living-situation question says - one failing follow-up
-   * answer is enough to qualify as homeless, full stop, not merely a
-   * "contradiction" to flag for review.
+   * Precedence:
+   *   1. The primary living-situation question is dispositive whenever it's
+   *      answered with a recognized response. "In a home or apartment that
+   *      we own (mortgage) or rent (lease)" means NOT eligible, full stop -
+   *      it is not overridden by the follow-up questions, since a family
+   *      that owns/rents a stable home has a fixed, regular, and adequate
+   *      residence by definition. Likewise, any of the homeless-indicating
+   *      categories (shelter, hotel/motel, transitional, doubled-up,
+   *      unsheltered) is dispositive on its own toward ELIGIBLE.
+   *   2. Only when the primary question is left blank or answered with
+   *      unrecognized free text do the four follow-up questions (staying
+   *      with others due to hardship and a time-limited stay both speak to
+   *      "regular"; safety/adequacy speaks to "adequate"; intended
+   *      permanence speaks to "fixed") serve as a fallback test: any single
+   *      one indicating instability is enough to mark the family eligible.
+   *   A stable primary answer alongside a contradicting follow-up (e.g.
+   *   "we own our home" but also "there's a time limit on our stay") is
+   *   still recorded as NOT eligible per the primary response, but the
+   *   contradiction itself is surfaced separately as a data-quality note
+   *   worth a human double-checking (see contradictionFlags below).
    */
   function determineEligibility(family) {
     var primary = categorizeLivingSituation(family.livingSituation);
@@ -72,42 +83,44 @@
       category: 'Unknown/Insufficient Data',
       basis: '',
       needsReview: false,
-      supplementalFlags: supplementalFlags
+      supplementalFlags: supplementalFlags,
+      contradictionFlags: [] // populated only when a stable primary answer conflicts with a follow-up
     };
 
-    // Any single failing follow-up answer is dispositive by itself, per the
-    // statute's "fixed AND regular AND adequate" test - this overrides
-    // whatever the primary living-situation question says.
-    if (supplementalFlags.length > 0) {
-      result.eligible = true;
-      result.category = (primary && primary.eligible === true) ? primary.category : 'Unstable Housing (Follow-Up Indicates Instability)';
-      result.basis = 'Residence is not fixed, regular, and adequate: ' + supplementalFlags.join('; ') + '. This alone qualifies as homeless under McKinney-Vento, regardless of the primary living-situation answer.';
-      if (!primary) result.needsReview = true; // primary question was still left blank - worth a look for completeness
+    if (primary && primary.eligible === false) {
+      // Dispositive: owns/rents a stable home. Not overridden by follow-ups.
+      result.eligible = false;
+      result.category = primary.category;
+      result.basis = 'Living situation reported as stable, owned/leased housing. Not eligible under McKinney-Vento.';
+      if (supplementalFlags.length > 0) {
+        result.contradictionFlags = supplementalFlags;
+        result.basis += ' Note: follow-up answers suggest possible instability (' + supplementalFlags.join('; ') + '), but the primary "own/rent" response is treated as dispositive - worth a human double-check.';
+      }
       return result;
     }
 
-    if (!primary) {
-      result.basis = 'No living-situation response and no corroborating instability signals provided.';
-      result.needsReview = true;
-      return result;
-    }
-
-    result.category = primary.category;
-
-    if (primary.eligible === true) {
+    if (primary && primary.eligible === true) {
+      // Dispositive toward eligible: a recognized homeless-indicating category.
       result.eligible = true;
+      result.category = primary.category;
       result.basis = 'Living situation reported as "' + primary.category + '", which qualifies as homeless under McKinney-Vento.';
       return result;
     }
 
-    if (primary.eligible === false) {
-      result.eligible = false;
-      result.basis = 'Living situation reported as stable, owned/leased housing, and all follow-up answers indicate the residence is fixed, regular, and adequate. Not eligible under McKinney-Vento.';
+    // Primary question was left blank, or answered with unrecognized free
+    // text - fall back to the follow-up questions as the best available signal.
+    if (supplementalFlags.length > 0) {
+      result.eligible = true;
+      result.category = 'Unstable Housing (Follow-Up Indicates Instability)';
+      result.basis = (primary ? 'Living-situation response was unrecognized' : 'No living-situation response was given') +
+        ', but follow-up answers indicate the residence is not fixed, regular, and adequate: ' + supplementalFlags.join('; ') + '.';
+      result.needsReview = true; // primary question missing/unclear - worth a look for completeness
       return result;
     }
 
-    // primary.eligible === null -> unrecognized free-text response, no supplemental flags either
-    result.basis = 'Living-situation response ("' + clean.trim(family.livingSituation) + '") was not recognized and no corroborating instability signals were found.';
+    result.basis = primary
+      ? 'Living-situation response ("' + clean.trim(family.livingSituation) + '") was not recognized and no corroborating instability signals were found.'
+      : 'No living-situation response and no corroborating instability signals provided.';
     result.needsReview = true;
     return result;
   }
