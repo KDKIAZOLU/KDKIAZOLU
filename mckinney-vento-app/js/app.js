@@ -596,7 +596,8 @@
       'Student Names': studs.map(function (s) { return s.studentName; }).join('; '),
       'Schools': studs.map(function (s) { return s.schoolNameCorrected; }).join('; '),
       'Possible Nearby Schools (same ZIP, approximate)': (f.nearbySchools || []).join('; '),
-      'Official Zoning Map': window.MVZoning.ZONING_MAP_URL
+      'Official Zoning Map': window.MVZoning.ZONING_MAP_URL,
+      'Address May Be Outside Baltimore City': f.possiblyOutsideBaltimoreCity ? 'Yes — ' + f.outsideBaltimoreCityReason : ''
     };
   }
   function studentToRow(s) {
@@ -624,6 +625,7 @@
       'Household Needs': f ? (f.householdNeeds || []).join('; ') : '',
       'Possible Nearby Schools (same ZIP, approximate)': (s.nearbySchools || []).join('; '),
       'Official Zoning Map': window.MVZoning.ZONING_MAP_URL,
+      'Address May Be Outside Baltimore City': f && f.possiblyOutsideBaltimoreCity ? 'Yes — ' + f.outsideBaltimoreCityReason : '',
       'McKinney-Vento Eligible': f ? (f.eligibility.eligible === true ? 'Yes' : f.eligibility.eligible === false ? 'No' : 'Needs Review') : '',
       'Eligibility Category': f ? f.eligibility.category : ''
     };
@@ -787,6 +789,14 @@
         if (val === false) val = 'No';
         if (c === 'eligibility.eligible') val = val === 'Yes' ? '✅ Yes' : val === 'No' ? '⛔ No' : '❓ Review';
         if (c === 'schoolNeedsReview') val = val === 'Yes' ? '⚠️ Yes' : '';
+        if (c === 'currentAddress' && mode === 'families' && r.possiblyOutsideBaltimoreCity) {
+          var addrTd = document.createElement('td');
+          addrTd.textContent = (val == null ? '' : val) + ' ';
+          var badge = el('span', { class: 'badge badge-warning', text: '⚠ Outside city?', title: r.outsideBaltimoreCityReason });
+          addrTd.appendChild(badge);
+          tr.appendChild(addrTd);
+          return;
+        }
         var td = document.createElement('td');
         td.textContent = val == null ? '' : val;
         tr.appendChild(td);

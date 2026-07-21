@@ -101,12 +101,74 @@
     return { zip: zip, schools: candidates.slice(0, limit) };
   }
 
+  // Baltimore City's official USPS ZIP range: 21201-21231, plus 21237,
+  // 21239, 21251, 21287. A handful of these (notably 21234, shared with
+  // Parkville) genuinely straddle the city/county line, so a match here
+  // is a "may be outside the city" signal, not a certainty either way.
+  var CITY_ZIP_MIN = 21201, CITY_ZIP_MAX = 21231;
+  var CITY_ZIP_EXTRA = { 21237: 1, 21239: 1, 21251: 1, 21287: 1 };
+  function isKnownCityZip(zip) {
+    var n = parseInt(zip, 10);
+    if (isNaN(n)) return null;
+    return (n >= CITY_ZIP_MIN && n <= CITY_ZIP_MAX) || !!CITY_ZIP_EXTRA[n];
+  }
+
+  // Explicit Baltimore County / neighboring-jurisdiction place names that
+  // sometimes turn up in free-text addresses. Excludes matches immediately
+  // followed by a street-suffix word (e.g. "Woodlawn Rd" and "Reisterstown
+  // Rd" are real streets *within* Baltimore City, not the separate
+  // Baltimore County communities of the same name) to avoid false alarms.
+  var OTHER_JURISDICTION_PLACES = [
+    'catonsville', 'dundalk', 'towson', 'essex', 'randallstown', 'windsor mill',
+    'woodlawn', 'pikesville', 'glen burnie', 'owings mills', 'reisterstown',
+    'middle river', 'rosedale', 'parkville', 'halethorpe', 'lansdowne', 'arbutus',
+    'gwynn oak', 'brooklyn park', 'linthicum', 'severn', 'laurel', 'silver spring',
+    'gaithersburg', 'annapolis', 'bel air', 'forest hill', 'perry hall',
+    'white marsh', 'nottingham', 'carney', 'overlea', 'fullerton'
+  ];
+  var STREET_SUFFIX_RE = '(rd|road|ave|avenue|st|street|blvd|boulevard|ct|court|ln|lane|dr|drive|way|pkwy|parkway|cir|circle|pl|place)\\.?\\b';
+  var PLACE_NAME_RE = new RegExp(
+    '\\b(' + OTHER_JURISDICTION_PLACES.map(function (p) { return p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\\b(?!\\s*' + STREET_SUFFIX_RE + ')',
+    'i'
+  );
+
+  /**
+   * Best-effort, review-not-certainty check for whether a free-text address
+   * looks like it's outside Baltimore City. Returns { flagged, reason } -
+   * reason is null when flagged is false. Never a hard "no" either: absence
+   * of a hit just means nothing recognizable was found, not confirmation
+   * the address is in the city.
+   */
+  function checkOutsideBaltimoreCity(address) {
+    var addr = String(address || '');
+    if (!addr.trim()) return { flagged: false, reason: null };
+
+    var placeMatch = addr.match(PLACE_NAME_RE);
+    if (placeMatch) {
+      return { flagged: true, reason: 'Address mentions "' + placeMatch[1] + '", which is outside Baltimore City.' };
+    }
+
+    // Take the LAST 5-digit number in the string, not the first - PO Box
+    // numbers and similar (e.g. "P.O Box 29112 Baltimore MD 21205") would
+    // otherwise be mistaken for the ZIP that correctly follows at the end.
+    var zipMatches = addr.match(/\b\d{5}\b/g);
+    if (zipMatches) {
+      var lastZip = zipMatches[zipMatches.length - 1];
+      if (isKnownCityZip(lastZip) === false) {
+        return { flagged: true, reason: 'ZIP code ' + lastZip + ' is not in Baltimore City’s standard ZIP range.' };
+      }
+    }
+
+    return { flagged: false, reason: null };
+  }
+
   global.MVZoning = {
     ZONING_MAP_URL: ZONING_MAP_URL,
     extractZip: extractZip,
     parseGradeRange: parseGradeRange,
     approxGradeFromAge: approxGradeFromAge,
     gradeRangeContainsAge: gradeRangeContainsAge,
-    findNearbySchools: findNearbySchools
+    findNearbySchools: findNearbySchools,
+    checkOutsideBaltimoreCity: checkOutsideBaltimoreCity
   };
 })(typeof window !== 'undefined' ? window : this);

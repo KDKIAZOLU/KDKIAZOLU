@@ -171,6 +171,15 @@
         rowStudents.forEach(function (s) { s.nearbySchools = []; });
       }
 
+      if (global.MVZoning) {
+        var outsideCheck = global.MVZoning.checkOutsideBaltimoreCity(family.currentAddress);
+        family.possiblyOutsideBaltimoreCity = outsideCheck.flagged;
+        family.outsideBaltimoreCityReason = outsideCheck.reason;
+      } else {
+        family.possiblyOutsideBaltimoreCity = false;
+        family.outsideBaltimoreCityReason = null;
+      }
+
       families.push(family);
 
       // --- Data quality issue detection ---
@@ -188,6 +197,9 @@
       }
       if (rowStudents.length === 0) {
         issues.push({ level: 'warning', familyId: family.id, field: 'students', message: 'No students listed on this submission.' });
+      }
+      if (family.possiblyOutsideBaltimoreCity) {
+        issues.push({ level: 'review', familyId: family.id, field: 'currentAddress', message: family.outsideBaltimoreCityReason + ' The zoning map and "possible nearby schools" hint are Baltimore City Schools-specific and may not apply to this family.' });
       }
       rowStudents.forEach(function (s) {
         if (s.schoolNeedsReview) {
