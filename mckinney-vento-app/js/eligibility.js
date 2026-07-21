@@ -45,17 +45,27 @@
    * family: normalized family record with cleaned fields:
    *   livingSituation, stayingWithOthers (bool|null), timeLimitOnStay (bool|null),
    *   housingSafeAdequate (string englishPortion), housingPermanent (string englishPortion)
+   *
+   * The statute requires a residence to be fixed AND regular AND adequate
+   * for a family to be considered NOT homeless - so failing any single one
+   * of those three (surfaced here via four follow-up questions: staying
+   * with others due to hardship and time-limited stay both speak to
+   * "regular"; safety/adequacy speaks to "adequate"; intended permanence
+   * speaks to "fixed") is dispositive on its own. It doesn't matter what
+   * the primary living-situation question says - one failing follow-up
+   * answer is enough to qualify as homeless, full stop, not merely a
+   * "contradiction" to flag for review.
    */
   function determineEligibility(family) {
     var primary = categorizeLivingSituation(family.livingSituation);
     var supplementalFlags = [];
 
-    if (family.stayingWithOthers === true) supplementalFlags.push('Staying with others due to loss of housing/financial hardship');
-    if (family.timeLimitOnStay === true) supplementalFlags.push('Time limit/condition on current stay');
+    if (family.stayingWithOthers === true) supplementalFlags.push('Staying with others due to loss of housing/financial hardship (not "regular")');
+    if (family.timeLimitOnStay === true) supplementalFlags.push('Time limit/condition on current stay (not "regular")');
     var safe = clean.trim(family.housingSafeAdequate).toLowerCase();
-    if (safe === 'no' || safe.indexOf('some concerns') !== -1) supplementalFlags.push('Housing reported as not safe/adequate');
+    if (safe === 'no' || safe.indexOf('some concerns') !== -1) supplementalFlags.push('Housing reported as not safe/adequate (not "adequate")');
     var permanent = clean.trim(family.housingPermanent).toLowerCase();
-    if (permanent === 'no' || permanent.indexOf('not sure') !== -1) supplementalFlags.push('Housing arrangement not intended to be permanent');
+    if (permanent === 'no' || permanent.indexOf('not sure') !== -1) supplementalFlags.push('Housing arrangement not intended to be permanent (not "fixed")');
 
     var result = {
       eligible: null,
@@ -65,17 +75,20 @@
       supplementalFlags: supplementalFlags
     };
 
+    // Any single failing follow-up answer is dispositive by itself, per the
+    // statute's "fixed AND regular AND adequate" test - this overrides
+    // whatever the primary living-situation question says.
+    if (supplementalFlags.length > 0) {
+      result.eligible = true;
+      result.category = (primary && primary.eligible === true) ? primary.category : 'Unstable Housing (Follow-Up Indicates Instability)';
+      result.basis = 'Residence is not fixed, regular, and adequate: ' + supplementalFlags.join('; ') + '. This alone qualifies as homeless under McKinney-Vento, regardless of the primary living-situation answer.';
+      if (!primary) result.needsReview = true; // primary question was still left blank - worth a look for completeness
+      return result;
+    }
+
     if (!primary) {
-      // No primary answer at all - fall back entirely to supplemental signals
-      if (supplementalFlags.length > 0) {
-        result.eligible = true;
-        result.category = 'Doubled-Up (Sharing Housing)';
-        result.basis = 'Inferred from follow-up answers (no direct living-situation response): ' + supplementalFlags.join('; ');
-        result.needsReview = true;
-      } else {
-        result.basis = 'No living-situation response and no corroborating risk signals provided.';
-        result.needsReview = true;
-      }
+      result.basis = 'No living-situation response and no corroborating instability signals provided.';
+      result.needsReview = true;
       return result;
     }
 
@@ -84,32 +97,18 @@
     if (primary.eligible === true) {
       result.eligible = true;
       result.basis = 'Living situation reported as "' + primary.category + '", which qualifies as homeless under McKinney-Vento.';
-      if (supplementalFlags.length) result.basis += ' Corroborated by: ' + supplementalFlags.join('; ') + '.';
       return result;
     }
 
     if (primary.eligible === false) {
-      if (supplementalFlags.length > 0) {
-        // Contradiction: says stable housing but also reports risk signals - flag for human review
-        result.eligible = null;
-        result.basis = 'Reported stable owned/leased housing, but follow-up answers suggest possible instability: ' + supplementalFlags.join('; ') + '. Needs manual review.';
-        result.needsReview = true;
-      } else {
-        result.eligible = false;
-        result.basis = 'Living situation reported as stable, owned/leased housing with no corroborating risk signals. Not eligible under McKinney-Vento.';
-      }
+      result.eligible = false;
+      result.basis = 'Living situation reported as stable, owned/leased housing, and all follow-up answers indicate the residence is fixed, regular, and adequate. Not eligible under McKinney-Vento.';
       return result;
     }
 
-    // primary.eligible === null -> unrecognized free-text response
-    if (supplementalFlags.length > 0) {
-      result.eligible = true;
-      result.basis = 'Living-situation response was unrecognized, but follow-up answers indicate housing instability: ' + supplementalFlags.join('; ') + '.';
-      result.needsReview = true;
-    } else {
-      result.basis = 'Living-situation response ("' + clean.trim(family.livingSituation) + '") was not recognized and no corroborating signals were found.';
-      result.needsReview = true;
-    }
+    // primary.eligible === null -> unrecognized free-text response, no supplemental flags either
+    result.basis = 'Living-situation response ("' + clean.trim(family.livingSituation) + '") was not recognized and no corroborating instability signals were found.';
+    result.needsReview = true;
     return result;
   }
 

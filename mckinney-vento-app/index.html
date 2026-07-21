@@ -158,7 +158,16 @@
         </div>
       </div>
 
-      <div class="kpi-row" id="kpiRow"></div>
+      <div class="card">
+        <h3>Families (filtered)</h3>
+        <div class="kpi-row" id="kpiRowFamilies"></div>
+        <h3 style="margin-top:16px;">Students (filtered)</h3>
+        <div class="kpi-row" id="kpiRowStudents"></div>
+        <p class="small muted" style="margin-top:12px;">
+          Eligible + Not Eligible + Needs Review always add up to the family count above — every family falls into exactly one. <strong>Possible Duplicate Submissions is a separate, overlapping flag</strong> (a duplicate can also be eligible, not eligible, or needs review), so don't subtract it from those three.
+          Family-level and student-level counts are different units — a filtered family count and a filtered student count won't add up to each other, since each family can have multiple students.
+        </p>
+      </div>
 
       <div class="grid grid-2">
         <div class="card chart-card">

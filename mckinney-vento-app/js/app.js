@@ -513,15 +513,17 @@
     students.forEach(function (s) { if (s.schoolNameCorrected) schoolsRepresented[s.schoolNameCorrected] = 1; });
     var duplicateCount = state.issues.filter(function (i) { return i.field === 'duplicate' && families.some(function (f) { return f.id === i.familyId; }); }).length;
 
-    $('#kpiRow').innerHTML =
-      kpiHtml(families.length, 'Families (filtered)', 'primary') +
-      kpiHtml(students.length, 'Students (filtered)', 'primary') +
-      kpiHtml(eligibleCount, 'Eligible — McKinney-Vento', 'success') +
-      kpiHtml(notEligibleCount, 'Not Eligible (Stable Housing)', 'danger') +
-      kpiHtml(reviewCount, 'Needs Review', 'warning') +
+    $('#kpiRowFamilies').innerHTML =
+      kpiHtml(families.length, 'Total Families', 'primary') +
+      kpiHtml(eligibleCount, 'Eligible Families — McKinney-Vento', 'success') +
+      kpiHtml(notEligibleCount, 'Not Eligible Families (Stable Housing)', 'danger') +
+      kpiHtml(reviewCount, 'Families Needing Review', 'warning') +
+      kpiHtml(duplicateCount, 'Possible Duplicate Family Submissions', 'warning');
+
+    $('#kpiRowStudents').innerHTML =
+      kpiHtml(students.length, 'Total Students', 'primary') +
       kpiHtml(uniformNeedCount, 'Students Needing Uniforms', 'warning') +
-      kpiHtml(Object.keys(schoolsRepresented).length, 'Schools Represented', 'primary') +
-      kpiHtml(duplicateCount, 'Possible Duplicate Submissions', 'warning');
+      kpiHtml(Object.keys(schoolsRepresented).length, 'Schools Represented', 'primary');
 
     // Category donut
     var catCounts = {};
