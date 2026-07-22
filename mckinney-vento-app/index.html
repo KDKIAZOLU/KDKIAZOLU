@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>McKinney-Vento Family Survey Manager</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <h1>🏠 McKinney-Vento Survey Manager</h1>
+    <span class="subtitle">Offline data cleaning, eligibility &amp; dashboard tool</span>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <span id="datasetStatus" class="small muted"></span>
+      <button class="btn" id="btnTheme" title="Toggle light/dark">🌓 Theme</button>
+      <button class="btn btn-primary" id="btnImportTop">⬆️ Import File</button>
+      <input type="file" id="fileInput" accept=".csv,.xlsx">
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-view="import">1. Import</button>
+    <button class="tab-btn" data-view="mapping">2. Column Mapping</button>
+    <button class="tab-btn" data-view="schools">3. School Corrections <span class="badge badge-warning hidden" id="badgeSchools">0</span></button>
+    <button class="tab-btn" data-view="quality">4. Data Quality <span class="badge badge-warning hidden" id="badgeQuality">0</span></button>
+    <button class="tab-btn" data-view="dashboard">5. Dashboard</button>
+    <button class="tab-btn" data-view="records">6. Records</button>
+    <button class="tab-btn" data-view="settings">7. Settings</button>
+  </div>
+
+  <main>
+
+    <!-- ============ IMPORT ============ -->
+    <section class="view active" id="view-import">
+      <div class="card">
+        <h2>Import Survey Responses</h2>
+        <p class="muted small">Drop in a CSV or Excel (.xlsx) export of the Homeless Status Annual Review form (or any similarly-structured survey). Columns are matched automatically by meaning, not position — renamed, reordered, or partially-different files still import correctly.</p>
+        <div class="dropzone" id="dropzone">
+          <div class="icon">📄⬆️</div>
+          <div><strong>Click to choose a file</strong> or drag &amp; drop it here</div>
+          <div class="small">Accepted: .csv, .xlsx — processed entirely in your browser, nothing leaves this device.</div>
+        </div>
+        <div id="importProgress" class="hidden" style="margin-top:12px;">
+          <div class="small muted" id="importProgressText">Processing…</div>
+        </div>
+      </div>
+
+      <div class="card" id="importSummaryCard" style="display:none;">
+        <h2>Import Summary</h2>
+        <div id="importSummaryBody"></div>
+      </div>
+
+      <div class="card">
+        <h3>How it works</h3>
+        <ul class="step-list">
+          <li><span class="num">1</span><div>The file is parsed fully offline (a small built-in ZIP/DEFLATE + XML reader handles .xlsx; a custom parser handles .csv).</div></li>
+          <li><span class="num">2</span><div>Every column header is matched against a bilingual (English/Spanish) synonym dictionary to identify its meaning — e.g. "Nombre del estudiante" and "Student Name" both map to <span class="mono">studentName</span>.</div></li>
+          <li><span class="num">3</span><div>Repeating "add another student" blocks are auto-detected so multiple children per family are captured correctly, regardless of how many blocks the form contains.</div></li>
+          <li><span class="num">4</span><div>School names are corrected against the official reference list using exact match, known aliases/acronyms, and fuzzy matching — low-confidence guesses are queued for your review, never silently guessed.</div></li>
+          <li><span class="num">5</span><div>McKinney-Vento eligibility is determined per family from the housing question plus corroborating follow-up answers.</div></li>
+          <li><span class="num">6</span><div>Review flagged items in tabs 2–4, then explore the Dashboard and export filtered data any time.</div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ MAPPING ============ -->
+    <section class="view" id="view-mapping">
+      <div class="card">
+        <div class="flex-between">
+          <h2>Column Mapping</h2>
+          <div class="flex">
+            <button class="btn btn-sm" id="btnSaveProfile">💾 Save Mapping Profile</button>
+          </div>
+        </div>
+        <p class="muted small">Every source column is auto-classified below. Adjust anything that looks wrong using the dropdowns — your corrections can be saved as a reusable profile for future files with the same layout.</p>
+        <div id="mappingUnmappedNotice"></div>
+        <div class="table-wrap scroll-y">
+          <table id="mappingTable">
+            <thead><tr><th>#</th><th class="wrap">Source Header</th><th>Detected Field</th><th>Group</th><th>Confidence</th><th>Override</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SCHOOLS ============ -->
+    <section class="view" id="view-schools">
+      <div class="card">
+        <div class="flex-between">
+          <h2>School Name Corrections</h2>
+          <div class="flex">
+            <input type="search" id="schoolSearchFilter" placeholder="Filter raw name…" style="width:220px;">
+          </div>
+        </div>
+        <p class="muted small">High-confidence matches (exact, known alias, or strong fuzzy match) were applied automatically. Everything below needs a human decision. Confirm the suggestion or pick the correct school — your choice is remembered for future imports.</p>
+        <div class="table-wrap scroll-y">
+          <table id="schoolsTable">
+            <thead><tr><th class="wrap">Raw Value (as entered)</th><th># Students</th><th>Suggested Match</th><th>Confidence</th><th>Decision</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ QUALITY ============ -->
+    <section class="view" id="view-quality">
+      <div class="card">
+        <div class="flex-between">
+          <h2>Data Quality Issues</h2>
+          <div class="filter-bar" style="margin:0;">
+            <div class="field" style="min-width:140px;">
+              <select id="qualityLevelFilter">
+                <option value="">All levels</option>
+                <option value="error">Errors</option>
+                <option value="warning">Warnings</option>
+                <option value="review">Needs Review</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="qualityList" class="scroll-y"></div>
+      </div>
+    </section>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="view" id="view-dashboard">
+      <div class="filter-bar card">
+        <div class="field">
+          <label>School</label>
+          <div id="filterSchool"></div>
+        </div>
+        <div class="field">
+          <label>Eligibility</label>
+          <div id="filterEligibility"></div>
+        </div>
+        <div class="field">
+          <label>Living Situation Category</label>
+          <div id="filterCategory"></div>
+        </div>
+        <div class="field">
+          <label>Uniform / Support Need</label>
+          <div id="filterNeed"></div>
+        </div>
+        <div class="field">
+          <label>Uniform Size Group</label>
+          <div id="filterSizeGroup"></div>
+        </div>
+        <div class="field">
+          <label>Uniform Color</label>
+          <div id="filterUniformColor"></div>
+        </div>
+        <div class="field" style="flex:0;">
+          <button class="btn btn-sm" id="btnResetFilters">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Families (filtered)</h3>
+        <div class="kpi-row" id="kpiRowFamilies"></div>
+        <h3 style="margin-top:16px;">Students (filtered)</h3>
+        <div class="kpi-row" id="kpiRowStudents"></div>
+        <p class="small muted" style="margin-top:12px;">
+          Eligible + Not Eligible + Needs Review always add up to the family count above — every family falls into exactly one. <strong>Possible Duplicate Submissions is a separate, overlapping flag</strong> (a duplicate can also be eligible, not eligible, or needs review), so don't subtract it from those three.
+          Family-level and student-level counts are different units — a filtered family count and a filtered student count won't add up to each other, since each family can have multiple students.
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card chart-card">
+          <h2>Eligibility by Living-Situation Category</h2>
+          <canvas id="chartCategory"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h2>Families by Eligibility</h2>
+          <canvas id="chartEligibility"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h2>Students by School (Top 15)</h2>
+          <canvas id="chartSchools"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h2>Household / Student Support Needs</h2>
+          <canvas id="chartNeeds"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h2>Uniform Size Group Requests</h2>
+          <canvas id="chartUniformGroup"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h2>Housing Safety / Adequacy</h2>
+          <canvas id="chartSafety"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex-between">
+          <h2>Export Filtered Data</h2>
+        </div>
+        <p class="muted small">Exports respect every filter currently applied above. CSV and Excel include every field; PDF and Word use a condensed, print-friendly column set.</p>
+        <div class="field" style="max-width:200px;">
+          <label>Data to export</label>
+          <select id="exportDataType">
+            <option value="families">Families</option>
+            <option value="students">Students</option>
+          </select>
+        </div>
+        <div class="flex" style="margin-top:10px;">
+          <button class="btn btn-primary" id="btnExportCSV">⬇️ CSV</button>
+          <button class="btn btn-primary requires-full-browser" id="btnExportXLSX">⬇️ Excel (.xlsx)</button>
+          <button class="btn requires-full-browser" id="btnExportPDF">⬇️ PDF</button>
+          <button class="btn requires-full-browser" id="btnExportDOCX">⬇️ Word (.docx)</button>
+          <button class="btn" id="btnExportJSON">⬇️ JSON (full detail)</button>
+        </div>
+        <p class="small hidden" id="previewDownloadNote" style="color:var(--warning); margin-top:10px;">
+          ⚠ This preview can only save CSV and JSON (Excel/PDF/Word are hidden here — those file types can't be saved from this preview at all; open the app outside the preview for them). CSV saves as <span class="mono">.txt</span> — in Excel/Sheets use <strong>File → Import</strong> (not double-click-to-open) so it splits into columns instead of one long line of text.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ RECORDS ============ -->
+    <section class="view" id="view-records">
+      <div class="card">
+        <div class="flex-between">
+          <h2>Records</h2>
+          <div class="flex">
+            <select id="recordsMode" style="width:140px;">
+              <option value="families">Families</option>
+              <option value="students">Students</option>
+            </select>
+            <input type="search" id="recordsSearch" placeholder="Search name, school, address…" style="width:260px;">
+          </div>
+        </div>
+        <div class="table-wrap scroll-y" style="max-height:560px;">
+          <table id="recordsTable"><thead></thead><tbody></tbody></table>
+        </div>
+        <div class="pagination">
+          <span class="small muted" id="recordsCount"></span>
+          <button class="btn btn-sm" id="recordsPrev">◀ Prev</button>
+          <span class="small" id="recordsPage">1</span>
+          <button class="btn btn-sm" id="recordsNext">Next ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="view" id="view-settings">
+      <div class="grid grid-2">
+        <div class="card">
+          <h2>School Reference List</h2>
+          <p class="muted small">Currently using the embedded <strong>SY2025-26 Baltimore City Schools list (<span id="schoolListCount">0</span> schools)</strong>. Upload a replacement CSV/XLSX (with a "School Name" column) to use a different or updated list — no code changes needed.</p>
+          <div class="flex">
+            <button class="btn btn-sm" id="btnUploadSchoolList">Upload Replacement List</button>
+            <button class="btn btn-sm btn-danger" id="btnResetSchoolList">Reset to Default</button>
+          </div>
+          <input type="file" id="schoolListFileInput" accept=".csv,.xlsx">
+        </div>
+
+        <div class="card">
+          <h2>Saved Mapping Profiles</h2>
+          <div id="profilesList" class="scroll-y small"></div>
+        </div>
+
+        <div class="card">
+          <h2>Manual School Overrides</h2>
+          <div id="overridesList" class="scroll-y small"></div>
+        </div>
+
+        <div class="card">
+          <h2>Backup &amp; Restore Settings</h2>
+          <p class="muted small">Export your mapping profiles, school overrides, and reference list as a single JSON file, and restore them later or on another computer.</p>
+          <div class="flex">
+            <button class="btn btn-sm" id="btnExportSettings">⬇️ Export Settings</button>
+            <button class="btn btn-sm" id="btnImportSettings">⬆️ Import Settings</button>
+          </div>
+          <input type="file" id="settingsFileInput" accept=".json">
+          <hr>
+          <button class="btn btn-sm btn-danger" id="btnClearSession">Clear Current Dataset From Memory</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+</div>
+
+<script src="js/inflate.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/xlsx.js"></script>
+<script src="js/csv.js"></script>
+<script src="js/fuzzy.js"></script>
+<script src="js/schema.js"></script>
+<script src="js/cleaning.js"></script>
+<script src="js/schools-data.js"></script>
+<script src="js/schools.js"></script>
+<script src="js/eligibility.js"></script>
+<script src="js/zoning.js"></script>
+<script src="js/uniform-colors.js"></script>
+<script src="js/datamodel.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/store.js"></script>
+<script src="js/zip-writer.js"></script>
+<script src="js/xlsx-writer.js"></script>
+<script src="js/docx-writer.js"></script>
+<script src="js/pdf-writer.js"></script>
+<script src="js/multiselect.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
