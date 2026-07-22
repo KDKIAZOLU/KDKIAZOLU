@@ -169,6 +169,26 @@ select, input[type="text"], input[type="search"], input[type="number"] {
 .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 14px; }
 .filter-bar .field { margin-bottom: 0; min-width: 160px; flex: 1; }
 
+/* ---- Multi-select dropdown ---- */
+.multiselect-wrap { position: relative; }
+.multiselect-btn {
+  width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center;
+  font-weight: 400; padding: 7px 10px;
+}
+.multiselect-panel {
+  position: absolute; top: calc(100% + 4px); left: 0; min-width: 100%; width: max-content; max-width: 320px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); z-index: 30; padding: 6px;
+}
+.multiselect-controls { display: flex; gap: 6px; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid var(--border); }
+.multiselect-list { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.multiselect-option {
+  display: flex; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 6px; font-size: 13px;
+  cursor: pointer; white-space: nowrap;
+}
+.multiselect-option:hover { background: var(--surface-alt); }
+.multiselect-option input[type="checkbox"] { flex: none; }
+
 /* ---- Misc ---- */
 .muted { color: var(--text-muted); }
 .small { font-size: 12px; }

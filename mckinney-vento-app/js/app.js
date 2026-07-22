@@ -13,7 +13,7 @@
     students: [],
     issues: [],
     schoolMatcher: null,
-    filters: { school: '', eligibility: '', category: '', need: '', sizeGroup: '' },
+    filters: { school: [], eligibility: [], category: [], need: [], sizeGroup: [] },
     records: { mode: 'families', page: 1, pageSize: 25, search: '', sortField: null, sortDir: 1 }
   };
 
@@ -437,6 +437,39 @@
   $('#qualityLevelFilter').addEventListener('change', renderQualityList);
 
   // ---------------------------------------------------------------- dashboard filters
+  // Synthetic value spliced into the "Uniform / Support Need" filter
+  // alongside the real household-needs answers, so "needs a uniform" can be
+  // filtered on from the same dropdown without touching the separate
+  // Uniform Size Group filter.
+  var UNIFORM_NEED_VALUE = 'Uniform';
+
+  var filterWidgets = {};
+  function initFilterWidgets() {
+    var specs = [
+      { id: 'filterSchool', key: 'school' },
+      { id: 'filterEligibility', key: 'eligibility' },
+      { id: 'filterCategory', key: 'category' },
+      { id: 'filterNeed', key: 'need' },
+      { id: 'filterSizeGroup', key: 'sizeGroup' }
+    ];
+    specs.forEach(function (spec) {
+      filterWidgets[spec.key] = window.MVMultiSelect.create($('#' + spec.id), {
+        placeholder: 'All',
+        onChange: function (selected) {
+          state.filters[spec.key] = selected;
+          state.records.page = 1;
+          renderDashboard();
+          renderRecordsTab();
+        }
+      });
+    });
+    filterWidgets.eligibility.setOptions([
+      { value: 'eligible', label: 'Eligible' },
+      { value: 'not_eligible', label: 'Not Eligible' },
+      { value: 'review', label: 'Needs Review' }
+    ]);
+  }
+
   function populateDashboardFilterOptions() {
     var schoolSet = {}, categorySet = {}, needSet = {}, sizeSet = {};
     state.students.forEach(function (s) { if (s.schoolNameCorrected) schoolSet[s.schoolNameCorrected] = 1; if (s.uniformSizeGroup) sizeSet[s.uniformSizeGroup] = 1; });
@@ -444,31 +477,19 @@
       if (f.eligibility && f.eligibility.category) categorySet[f.eligibility.category] = 1;
       (f.householdNeeds || []).forEach(function (n) { needSet[n] = 1; });
     });
-    fillSelect('#filterSchool', Object.keys(schoolSet).sort(), 'All Schools');
-    fillSelect('#filterCategory', Object.keys(categorySet).sort(), 'All Categories');
-    fillSelect('#filterNeed', Object.keys(needSet).sort(), 'All Needs');
-    fillSelect('#filterSizeGroup', Object.keys(sizeSet).sort(), 'All Sizes');
+    filterWidgets.school.setOptions(Object.keys(schoolSet).sort().map(function (v) { return { value: v, label: v }; }));
+    filterWidgets.category.setOptions(Object.keys(categorySet).sort().map(function (v) { return { value: v, label: v }; }));
+    filterWidgets.need.setOptions(
+      [{ value: UNIFORM_NEED_VALUE, label: 'Uniform' }].concat(
+        Object.keys(needSet).sort().map(function (v) { return { value: v, label: v }; })
+      )
+    );
+    filterWidgets.sizeGroup.setOptions(Object.keys(sizeSet).sort().map(function (v) { return { value: v, label: v }; }));
   }
-  function fillSelect(sel, values, allLabel) {
-    var el2 = $(sel);
-    var current = el2.value;
-    el2.innerHTML = '';
-    el2.appendChild(el('option', { value: '' }, [document.createTextNode(allLabel)]));
-    values.forEach(function (v) { el2.appendChild(el('option', { value: v }, [document.createTextNode(v)])); });
-    if (values.indexOf(current) !== -1) el2.value = current;
-  }
-  ['filterSchool', 'filterEligibility', 'filterCategory', 'filterNeed', 'filterSizeGroup'].forEach(function (id) {
-    $('#' + id).addEventListener('change', function () {
-      var map = { filterSchool: 'school', filterEligibility: 'eligibility', filterCategory: 'category', filterNeed: 'need', filterSizeGroup: 'sizeGroup' };
-      state.filters[map[id]] = this.value;
-      state.records.page = 1;
-      renderDashboard();
-      renderRecordsTab();
-    });
-  });
+
   $('#btnResetFilters').addEventListener('click', function () {
-    state.filters = { school: '', eligibility: '', category: '', need: '', sizeGroup: '' };
-    ['filterSchool', 'filterEligibility', 'filterCategory', 'filterNeed', 'filterSizeGroup'].forEach(function (id) { $('#' + id).value = ''; });
+    state.filters = { school: [], eligibility: [], category: [], need: [], sizeGroup: [] };
+    Object.keys(filterWidgets).forEach(function (key) { filterWidgets[key].reset(); });
     renderDashboard();
     renderRecordsTab();
   });
@@ -478,15 +499,24 @@
     return f.eligibility.eligible ? 'eligible' : 'not_eligible';
   }
 
+  // Multiple selected values within one filter are OR'd together (e.g.
+  // School A or School B); the different filters are AND'd together.
   function familyMatchesFilters(f) {
     var filt = state.filters;
-    if (filt.eligibility && eligibilityBucket(f) !== filt.eligibility) return false;
-    if (filt.category && f.eligibility.category !== filt.category) return false;
-    if (filt.need && (f.householdNeeds || []).indexOf(filt.need) === -1) return false;
-    if (filt.school || filt.sizeGroup) {
+    if (filt.eligibility.length && filt.eligibility.indexOf(eligibilityBucket(f)) === -1) return false;
+    if (filt.category.length && filt.category.indexOf(f.eligibility.category) === -1) return false;
+    if (filt.need.length) {
+      var studs0 = studentsOfFamily(f.id);
+      var matchesNeed = filt.need.some(function (need) {
+        if (need === UNIFORM_NEED_VALUE) return studs0.some(function (s) { return s.needsUniform === true; });
+        return (f.householdNeeds || []).indexOf(need) !== -1;
+      });
+      if (!matchesNeed) return false;
+    }
+    if (filt.school.length || filt.sizeGroup.length) {
       var studs = studentsOfFamily(f.id);
-      if (filt.school && !studs.some(function (s) { return s.schoolNameCorrected === filt.school; })) return false;
-      if (filt.sizeGroup && !studs.some(function (s) { return s.uniformSizeGroup === filt.sizeGroup; })) return false;
+      if (filt.school.length && !studs.some(function (s) { return filt.school.indexOf(s.schoolNameCorrected) !== -1; })) return false;
+      if (filt.sizeGroup.length && !studs.some(function (s) { return filt.sizeGroup.indexOf(s.uniformSizeGroup) !== -1; })) return false;
     }
     return true;
   }
@@ -960,6 +990,7 @@
   });
 
   // ---------------------------------------------------------------- init
+  initFilterWidgets();
   renderSettingsTab();
   updateStatusBar();
   if (window.claude && window.claude.downloads) {

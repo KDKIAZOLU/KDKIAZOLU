@@ -130,28 +130,23 @@
       <div class="filter-bar card">
         <div class="field">
           <label>School</label>
-          <select id="filterSchool"><option value="">All Schools</option></select>
+          <div id="filterSchool"></div>
         </div>
         <div class="field">
           <label>Eligibility</label>
-          <select id="filterEligibility">
-            <option value="">All</option>
-            <option value="eligible">Eligible</option>
-            <option value="not_eligible">Not Eligible</option>
-            <option value="review">Needs Review</option>
-          </select>
+          <div id="filterEligibility"></div>
         </div>
         <div class="field">
           <label>Living Situation Category</label>
-          <select id="filterCategory"><option value="">All Categories</option></select>
+          <div id="filterCategory"></div>
         </div>
         <div class="field">
           <label>Uniform / Support Need</label>
-          <select id="filterNeed"><option value="">All Needs</option></select>
+          <div id="filterNeed"></div>
         </div>
         <div class="field">
           <label>Uniform Size Group</label>
-          <select id="filterSizeGroup"><option value="">All Sizes</option></select>
+          <div id="filterSizeGroup"></div>
         </div>
         <div class="field" style="flex:0;">
           <button class="btn btn-sm" id="btnResetFilters">Reset</button>
@@ -306,6 +301,7 @@
 <script src="js/xlsx-writer.js"></script>
 <script src="js/docx-writer.js"></script>
 <script src="js/pdf-writer.js"></script>
+<script src="js/multiselect.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
