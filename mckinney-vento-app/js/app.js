@@ -13,7 +13,7 @@
     students: [],
     issues: [],
     schoolMatcher: null,
-    filters: { school: [], eligibility: [], category: [], need: [], sizeGroup: [] },
+    filters: { school: [], eligibility: [], category: [], need: [], sizeGroup: [], uniformColor: [] },
     records: { mode: 'families', page: 1, pageSize: 25, search: '', sortField: null, sortDir: 1 }
   };
 
@@ -450,7 +450,8 @@
       { id: 'filterEligibility', key: 'eligibility' },
       { id: 'filterCategory', key: 'category' },
       { id: 'filterNeed', key: 'need' },
-      { id: 'filterSizeGroup', key: 'sizeGroup' }
+      { id: 'filterSizeGroup', key: 'sizeGroup' },
+      { id: 'filterUniformColor', key: 'uniformColor' }
     ];
     specs.forEach(function (spec) {
       filterWidgets[spec.key] = window.MVMultiSelect.create($('#' + spec.id), {
@@ -471,8 +472,12 @@
   }
 
   function populateDashboardFilterOptions() {
-    var schoolSet = {}, categorySet = {}, needSet = {}, sizeSet = {};
-    state.students.forEach(function (s) { if (s.schoolNameCorrected) schoolSet[s.schoolNameCorrected] = 1; if (s.uniformSizeGroup) sizeSet[s.uniformSizeGroup] = 1; });
+    var schoolSet = {}, categorySet = {}, needSet = {}, sizeSet = {}, colorSet = {};
+    state.students.forEach(function (s) {
+      if (s.schoolNameCorrected) schoolSet[s.schoolNameCorrected] = 1;
+      if (s.uniformSizeGroup) sizeSet[s.uniformSizeGroup] = 1;
+      (s.uniformColorLabels || []).forEach(function (c) { colorSet[c] = 1; });
+    });
     state.families.forEach(function (f) {
       if (f.eligibility && f.eligibility.category) categorySet[f.eligibility.category] = 1;
       (f.householdNeeds || []).forEach(function (n) { needSet[n] = 1; });
@@ -485,10 +490,16 @@
       )
     );
     filterWidgets.sizeGroup.setOptions(Object.keys(sizeSet).sort().map(function (v) { return { value: v, label: v }; }));
+    // Present colors in the curated keyword order (js/uniform-colors.js),
+    // not alphabetically, and only the ones actually present in this data.
+    var colorOrder = window.MVUniformColors.COLOR_KEYWORDS.map(function (c) { return c.label; });
+    filterWidgets.uniformColor.setOptions(
+      colorOrder.filter(function (c) { return colorSet[c]; }).map(function (v) { return { value: v, label: v }; })
+    );
   }
 
   $('#btnResetFilters').addEventListener('click', function () {
-    state.filters = { school: [], eligibility: [], category: [], need: [], sizeGroup: [] };
+    state.filters = { school: [], eligibility: [], category: [], need: [], sizeGroup: [], uniformColor: [] };
     Object.keys(filterWidgets).forEach(function (key) { filterWidgets[key].reset(); });
     renderDashboard();
     renderRecordsTab();
@@ -513,10 +524,11 @@
       });
       if (!matchesNeed) return false;
     }
-    if (filt.school.length || filt.sizeGroup.length) {
+    if (filt.school.length || filt.sizeGroup.length || filt.uniformColor.length) {
       var studs = studentsOfFamily(f.id);
       if (filt.school.length && !studs.some(function (s) { return filt.school.indexOf(s.schoolNameCorrected) !== -1; })) return false;
       if (filt.sizeGroup.length && !studs.some(function (s) { return filt.sizeGroup.indexOf(s.uniformSizeGroup) !== -1; })) return false;
+      if (filt.uniformColor.length && !studs.some(function (s) { return (s.uniformColorLabels || []).some(function (c) { return filt.uniformColor.indexOf(c) !== -1; }); })) return false;
     }
     return true;
   }
@@ -654,6 +666,7 @@
       'Shirt Size': s.uniformShirtSize,
       'Pants Size': s.uniformPantsSize,
       'Uniform Color': s.uniformColor,
+      'Uniform Color (Normalized)': (s.uniformColorLabels || []).join('; '),
       'Household Needs': f ? (f.householdNeeds || []).join('; ') : '',
       'Possible Nearby Schools (same ZIP, approximate)': (s.nearbySchools || []).join('; '),
       'Official Zoning Map': window.MVZoning.ZONING_MAP_URL,
@@ -740,8 +753,8 @@
 
   var FAMILY_COLUMNS = ['parentName', 'currentAddress', 'livingSituation', 'eligibility.category', 'eligibility.eligible', 'studentCount', 'householdNeeds', 'nearbySchools', 'checkZoning'];
   var FAMILY_HEADERS = ['Parent/Guardian', 'Address', 'Living Situation', 'Category', 'Eligible', '# Students', 'Household Needs', 'Possible Nearby Schools (same ZIP)', 'Zoning'];
-  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'schoolAddress', 'schoolZip', 'schoolGrades', 'schoolManagementType', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'householdNeeds', 'nearbySchools', 'checkZoning', 'schoolNeedsReview'];
-  var STUDENT_HEADERS = ['Student Name', 'School', 'School Address', 'Zip', 'Grades Served', 'Management Type', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Household Needs', 'Possible Nearby Schools (same ZIP)', 'Zoning', 'School Flagged'];
+  var STUDENT_COLUMNS = ['studentName', 'schoolNameCorrected', 'schoolAddress', 'schoolZip', 'schoolGrades', 'schoolManagementType', 'dob', 'dobAge', 'needsUniform', 'uniformSizeGroup', 'uniformShirtSize', 'uniformPantsSize', 'uniformColor', 'householdNeeds', 'nearbySchools', 'checkZoning', 'schoolNeedsReview'];
+  var STUDENT_HEADERS = ['Student Name', 'School', 'School Address', 'Zip', 'Grades Served', 'Management Type', 'DOB', 'Age', 'Needs Uniform', 'Size Group', 'Shirt Size', 'Pants Size', 'Uniform Color', 'Household Needs', 'Possible Nearby Schools (same ZIP)', 'Zoning', 'School Flagged'];
 
   // "Check Zoning" never auto-transmits the address anywhere - it only
   // copies it to the clipboard (a browser-local action) and opens the

@@ -92,6 +92,7 @@
       student[fieldId] = values.length ? values[0] : '';
       student[fieldId + 'All'] = values;
     });
+    student.uniformColorLabels = global.MVUniformColors ? global.MVUniformColors.extractColorLabels(student.uniformColor) : [];
 
     if (!student.studentName) return null; // empty block slot - no student here
 
