@@ -14,7 +14,7 @@
 
 ## Scene 2: What is McKinney-Vento? (0:15–0:35)
 **On screen:** McKinney-Vento Homeless Assistance Act, Title VII-B (as amended by ESSA)
-**Narration:** The McKinney-Vento Act is a federal law. It keeps children and youth who lose their housing enrolled in school, attending, and on track to succeed. In Maryland, MSDE oversees it. Here in Baltimore, City Schools' Office of Homeless Services carries it out.
+**Narration:** The McKinney-Vento Act is a federal law. It keeps children and youth who lose their housing enrolled in school, attending, and on track to succeed. In Maryland, MSDE oversees it. Here in Baltimore, City Schools' McKinney-Vento Program carries it out.
 
 ## Scene 3: The numbers (0:35–1:00)
 **On screen (animated counters):**
@@ -48,25 +48,25 @@
 
 ## Scene 6: What City Schools provides (2:05–2:20)
 **On screen:** Uniforms and clothing · School supplies and backpacks · Transportation support · Laundry support · Fee waivers · Referrals to community partners
-**Narration:** Through the Office of Homeless Services, City Schools helps families with uniforms and clothing, school supplies, transportation, laundry support, fee waivers, and connections to community resources.
+**Narration:** Through its McKinney-Vento Program, City Schools helps families with uniforms and clothing, school supplies, transportation, laundry support, fee waivers, and connections to community resources.
 
 ## Scene 7: Your role (2:20–2:45)
 **On screen:** **Notice → Refer → Protect**
 1. **Notice** the signs: address changes, attendance gaps, missing supplies, fatigue, or mentions of "staying with" someone
-2. **Refer** to your school-based homeless liaison (often the social worker or counselor), who works with the Office of Homeless Services
+2. **Refer** to your school-based McKinney-Vento liaison (often the social worker or counselor), who works with the McKinney-Vento Program
 3. **Protect** privacy. A student's housing status is a confidential education record under FERPA, so never discuss it in front of peers
 4. **Never** delay enrollment or services while waiting for documents
 
-**Narration:** Your part comes down to three words: notice, refer, protect. Notice the signs. Refer the student to your school's homeless liaison. Protect the student's privacy, because housing status is confidential. And never let missing paperwork become a barrier.
+**Narration:** Your part comes down to three words: notice, refer, protect. Notice the signs. Refer the student to your school's McKinney-Vento liaison. Protect the student's privacy, because housing status is confidential. And never let missing paperwork become a barrier.
 
 ## Scene 8: Close and contacts (2:45–3:00)
 **On screen:**
-- City Schools Office of Homeless Services: baltimorecityschools.org/page/homeless-services
-- Phone: **443-642-2424** (City Schools homeless education liaison)
+- City Schools McKinney-Vento Program: baltimorecityschools.org/page/homeless-services
+- Phone: **443-642-2424** (City Schools McKinney-Vento liaison)
 - Your school-based liaison: **[name/role]**
 - MSDE: Education for Homeless Children and Youth Program
 
-**Narration:** Stability starts at school. If you think a student may be experiencing homelessness, reach out to your school liaison or City Schools' Office of Homeless Services today.
+**Narration:** Stability starts at school. If you think a student may be experiencing homelessness, reach out to your school liaison or City Schools' McKinney-Vento Program today.
 
 ---
 
@@ -74,7 +74,7 @@
 - MSDE, *Maryland Homeless Education Trend Data 2018–2024*: https://www.marylandpublicschools.org/about/Documents/DSFSS/Homeless/HomelessEducationTrendData2018-2024-A.pdf
 - MSDE, McKinney-Vento program page: https://www.marylandpublicschools.org/about/Pages/dsfss/homeless/index.aspx
 - MSDE, McKinney-Vento Fact Sheet (2023): https://www.marylandpublicschools.org/about/Documents/DSFSS/Homeless/McKinneyVentoFactsheet2023.pdf
-- City Schools, Homeless Services: https://www.baltimorecityschools.org/page/homeless-services/
+- City Schools, McKinney-Vento Program (formerly Homeless Services): https://www.baltimorecityschools.org/page/homeless-services/
 - City Schools Board Policy JFE, Students Experiencing Homelessness: https://go.boarddocs.com/mabe/bcpss/Board.nsf/goto?open=&id=96DRWG6F891E
 - Maryland Matters (Sept. 2024), earlier statewide figure (15,500+), not used in the video: https://marylandmatters.org/2024/09/09/back-to-school-marylands-homeless-school-children/
 - Maryland Matters / Capital News Service via Yahoo, Baltimore City 5,732 (2023–24): https://www.yahoo.com/news/maryland-homeless-students-increase-quarter-160100252.html

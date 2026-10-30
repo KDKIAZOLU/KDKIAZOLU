@@ -6,7 +6,7 @@ Each claim in the narration (`video/narration.json`) is listed by scene, with it
 - McKinney-Vento Act, Education for Homeless Children and Youths (42 U.S.C. §§ 11431–11435): https://uscode.house.gov/view.xhtml?path=/prelim@title42/chapter119/subchapter6/partB&edition=prelim
 - National Center for Homeless Education (NCHE), McKinney-Vento legislation overview: https://nche.ed.gov/legislation/mckinney-vento/
 - MSDE, McKinney-Vento program page (state oversight): https://www.marylandpublicschools.org/about/Pages/dsfss/homeless/index.aspx
-- City Schools, Homeless Services: https://www.baltimorecityschools.org/page/homeless-services/
+- City Schools, McKinney-Vento Program (formerly Homeless Services): https://www.baltimorecityschools.org/page/homeless-services/
 
 ## History (scene: history)
 - 1987, Stewart B. McKinney Homeless Assistance Act, P.L. 100-77, signed July 22, 1987. Subtitle VII-B created the Education for Homeless Children and Youth program: https://www.congress.gov/bill/100th-congress/house-bill/558
@@ -39,7 +39,7 @@ Each claim in the narration (`video/narration.json`) is listed by scene, with it
 - City Schools Board Policy JFE, Students Experiencing Homelessness: https://go.boarddocs.com/mabe/bcpss/Board.nsf/goto?open=&id=96DRWG6F891E
 
 ## City Schools services and contact (scenes: services, role, close)
-- City Schools, Homeless Services (uniforms, supplies, transportation, laundry, fee waivers, referrals): https://www.baltimorecityschools.org/page/homeless-services/
+- City Schools, McKinney-Vento Program, formerly Homeless Services (uniforms, supplies, transportation, laundry, fee waivers, referrals): https://www.baltimorecityschools.org/page/homeless-services/
 - Confidentiality of housing status (FERPA, and 42 U.S.C. § 11432(g)(3)(G)): see the § 11432 link above
 - 443-642-2424 is listed for Baltimore City Public Schools in MSDE's McKinney-Vento LEA coordinator list: https://www.marylandpublicschools.org/about/Documents/DSFSS/Homeless/McKinneyVentoLEACoordinators-A.pdf
-- Office of Homeless Services, 2000 Edgewood St. (211 Maryland listing): https://search.211md.org/search/2c0329f5-2d4e-5233-bbdf-b0f829527052
+- McKinney-Vento Program (listed under its former name, Office of Homeless Services), 2000 Edgewood St. (211 Maryland listing): https://search.211md.org/search/2c0329f5-2d4e-5233-bbdf-b0f829527052

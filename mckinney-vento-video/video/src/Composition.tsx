@@ -277,7 +277,7 @@ const Law: React.FC = () => (
       <Card delay={at("law", 0.75)} style={{ flex: 1 }}>
         <div style={{ color: C.muted, fontSize: 32 }}>Here in Baltimore</div>
         <div style={{ color: C.text, fontSize: 44, fontWeight: 700 }}>
-          City Schools Office of Homeless Services
+          City Schools McKinney-Vento Program
         </div>
       </Card>
     </div>
@@ -594,7 +594,7 @@ const SERVICES: [string, string][] = [
 
 const Services: React.FC = () => (
   <SceneFrame>
-    <Kicker>Office of Homeless Services</Kicker>
+    <Kicker>McKinney-Vento Program</Kicker>
     <Headline>How City Schools helps families</Headline>
     <div
       style={{
@@ -622,7 +622,7 @@ const Services: React.FC = () => (
 
 const STEPS: [string, string, number][] = [
   ["Notice", "Address changes, attendance gaps, fatigue, missing supplies, “staying with” someone", 0.2],
-  ["Refer", "To your school-based homeless liaison, who works with the Office of Homeless Services", 0.38],
+  ["Refer", "To your school-based McKinney-Vento liaison, who works with the McKinney-Vento Program", 0.38],
   ["Protect", "Housing status is a confidential education record (FERPA). Never discuss it in front of peers.", 0.58],
 ];
 
@@ -674,11 +674,11 @@ const Close: React.FC = () => (
       <Card delay={at("close", 0.3)} style={{ flex: 1 }}>
         <div style={{ color: C.muted, fontSize: 32 }}>First stop</div>
         <div style={{ color: C.text, fontSize: 46, fontWeight: 700 }}>
-          Your school-based homeless liaison
+          Your school-based McKinney-Vento liaison
         </div>
       </Card>
       <Card delay={at("close", 0.55)} style={{ flex: 1, borderColor: C.accent }}>
-        <div style={{ color: C.muted, fontSize: 32 }}>City Schools Homeless Education Liaison</div>
+        <div style={{ color: C.muted, fontSize: 32 }}>City Schools McKinney-Vento Liaison</div>
         <div style={{ color: C.accent, fontSize: 64, fontWeight: 800 }}>443-642-2424</div>
         <div style={{ color: C.text, fontSize: 30 }}>
           baltimorecityschools.org/page/homeless-services
