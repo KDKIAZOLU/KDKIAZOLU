@@ -37,6 +37,7 @@ const sceneFrames = (id: SceneId) =>
 const ORDER: SceneId[] = [
   "hook",
   "law",
+  "history",
   "numbers",
   "who",
   "rights",
@@ -176,6 +177,10 @@ const splitCaptions = (text: string) => {
 // Spoken-number spellings are kept for the voice; captions show digits.
 const CAPTION_FIXES: [RegExp, string][] = [
   [/twenty twenty-three to twenty-four/g, "2023–24"],
+  [/nineteen eighty-seven/g, "1987"],
+  [/two thousand one/g, "2001"],
+  [/In two thousand,/g, "In 2000,"],
+  [/twenty fifteen/g, "2015"],
   [/more than twenty thousand/g, "more than 20,000"],
   [/Fifty-seven hundred/g, "About 5,700"],
   [/one in four/g, "1 in 4"],
@@ -278,6 +283,85 @@ const Law: React.FC = () => (
     </div>
   </SceneFrame>
 );
+
+const MILESTONES: [string, string, string, number][] = [
+  [
+    "1987",
+    "Stewart B. McKinney Homeless Assistance Act",
+    "Signed by President Reagan. Creates the Education for Homeless Children and Youth program.",
+    0.03,
+  ],
+  [
+    "2000",
+    "Renamed McKinney\u2011Vento",
+    "Honoring Minnesota Congressman Bruce Vento.",
+    0.35,
+  ],
+  [
+    "2001",
+    "No Child Left Behind",
+    "A liaison in every district, immediate enrollment, transportation to the school of origin.",
+    0.49,
+  ],
+  [
+    "2015",
+    "Every Student Succeeds Act",
+    "Stronger protections for preschoolers and unaccompanied youth, plus college and career readiness.",
+    0.74,
+  ],
+];
+
+const History: React.FC = () => {
+  const frame = useCurrentFrame();
+  const lineGrow = interpolate(
+    frame,
+    [at("history", 0.03), at("history", 0.8)],
+    [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+  return (
+    <SceneFrame>
+      <Kicker>A brief history</Kicker>
+      <Headline>Nearly 40 years of protecting students</Headline>
+      <div style={{ position: "relative", marginTop: 70 }}>
+        <div
+          style={{
+            position: "absolute",
+            top: 30,
+            left: 0,
+            height: 6,
+            width: `${lineGrow * 100}%`,
+            background: C.accent,
+            borderRadius: 3,
+          }}
+        />
+        <div style={{ display: "flex", gap: 28 }}>
+          {MILESTONES.map(([year, title, desc, f]) => (
+            <Enter key={year} delay={at("history", f)} style={{ flex: 1 }}>
+              <div
+                style={{
+                  width: 66,
+                  height: 66,
+                  borderRadius: 33,
+                  background: C.accent,
+                  border: `8px solid ${C.bg}`,
+                  marginBottom: 22,
+                }}
+              />
+              <div style={{ color: C.accent, fontSize: 72, fontWeight: 800 }}>{year}</div>
+              <div style={{ color: C.text, fontSize: 38, fontWeight: 700, lineHeight: 1.15 }}>
+                {title}
+              </div>
+              <div style={{ color: C.muted, fontSize: 28, marginTop: 12, lineHeight: 1.35 }}>
+                {desc}
+              </div>
+            </Enter>
+          ))}
+        </div>
+      </div>
+    </SceneFrame>
+  );
+};
 
 const Counter: React.FC<{ to: number; delay: number; suffix?: string }> = ({
   to,
@@ -607,6 +691,7 @@ const Close: React.FC = () => (
 const SCENES: Record<SceneId, React.FC> = {
   hook: Hook,
   law: Law,
+  history: History,
   numbers: Numbers,
   who: Who,
   rights: Rights,
