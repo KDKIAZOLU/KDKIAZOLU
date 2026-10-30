@@ -4,7 +4,7 @@
 **Target length:** about 2:30–3:00
 **Format:** 16:9, 1920×1080 MP4, with burned-in captions so it works with the sound off
 
-> Numbers marked ⚠️ come from news coverage of MSDE data, not the MSDE file itself. Please check them against the current MSDE *Homeless Education Trend Data* and the City Schools Office of Homeless Services before the video is rendered.
+> FINAL: rendered to `video/out/McKinney-Vento-CitySchools-PD.mp4`. The exact narration is in `video/narration.json`. Numbers come from the MSDE *Homeless Education Trend Data 2018–2024* table (2023–24 is the latest year MSDE has published).
 
 ---
 
@@ -18,10 +18,10 @@
 
 ## Scene 3: The numbers (0:35–1:00)
 **On screen (animated counters):**
-- Nationally: a record **~1.5 million** students experienced homelessness in 2023–24 (U.S. Dept. of Education / NCHE)
-- Maryland: **15,500+** students identified in 2023–24, about 1.7% of enrollment ⚠️
-- Baltimore City: **~5,700** students identified in 2023–24, about **1 in 13** City Schools students ⚠️
-- Baltimore City alone accounts for **about 1 in 3** of Maryland's identified students ⚠️
+- Maryland: **20,402** students identified in 2023–24 (MSDE trend data)
+- Baltimore City: **5,732** identified in 2023–24, up from 4,733 (2022–23) and 2,922 (2018–19): nearly doubled (MSDE trend data)
+- Baltimore City is **more than 1 in 4** of Maryland's identified students (5,732 / 20,402 = 28%)
+- About **1 in 13** City Schools students (5,732 of ~76,000 enrolled)
 
 **Narration:** Across the country, a record one and a half million students experienced homelessness in 2023–24. In Maryland, more than fifteen thousand were identified. About fifty-seven hundred of them were here in Baltimore City. That is roughly one in thirteen of our students, and about a third of all the identified students in the state.
 
