@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BID Flowchart (Draft)</title>
+<style>
+  @page { size: Letter landscape; margin: 0.4in; }
+  :root { --navy:#0B2545; --gold:#F2A900; --green:#1E7B4F; --greenbg:#E8F5EE; --red:#B03A2E; --redbg:#FBECEA; --q:#FFF6DD; --soft:#EEF2F7; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Inter,"Liberation Sans",sans-serif; color:#111; font-size:9.5pt; line-height:1.3; }
+  .page { width:10.2in; height:7.7in; position:relative; page-break-after:always; }
+  .page:last-child { page-break-after:auto; }
+  header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:3px solid var(--gold); padding-bottom:4px; }
+  h1 { margin:0; font-size:17pt; color:var(--navy); }
+  .draft { font-size:9pt; font-weight:700; color:var(--red); border:1.5px solid var(--red); padding:2px 8px; border-radius:4px; }
+  .sub { font-size:8.5pt; color:#444; }
+  .flow { display:grid; grid-template-columns: 2.75in 0.6in 3.25in 0.6in 2.8in; align-items:center; margin-top:8px; }
+  .box { border-radius:8px; padding:4px 8px; font-size:8.2pt; line-height:1.25; }
+  .down { height:18px; display:flex; justify-content:center; position:relative; }
+  .down::before { content:""; width:2px; background:var(--navy); height:12px; }
+  .down::after { content:""; position:absolute; bottom:0; border:6px solid transparent; border-top:7px solid var(--navy); border-bottom:0; }
+  .down span { position:absolute; left:calc(50% + 8px); top:3px; font-weight:700; font-size:8pt; color:var(--navy); white-space:nowrap; }
+  .side { position:relative; height:100%; display:flex; align-items:center; }
+  .side::before { content:""; position:absolute; left:6px; right:6px; top:50%; border-top:2px solid var(--navy); }
+  .side.left::after { content:""; position:absolute; left:0; top:calc(50% - 5px); border:5px solid transparent; border-right:8px solid var(--navy); border-left:0; }
+  .side.right::after { content:""; position:absolute; right:0; top:calc(50% - 5px); border:5px solid transparent; border-left:8px solid var(--navy); border-right:0; }
+  .side span { position:absolute; left:0; right:0; bottom:calc(50% + 3px); text-align:center; font-weight:700; font-size:7.5pt; color:var(--navy); line-height:1.1; }
+  .start { background:var(--navy); color:#fff; font-weight:700; text-align:center; }
+  .q { background:var(--q); border:2px solid var(--gold); text-align:center; font-weight:600; }
+  .act { background:#fff; border:2px solid var(--navy); }
+  .note { background:var(--soft); border:1px dashed var(--navy); font-size:8pt; }
+  .nobid { background:var(--greenbg); border:2px solid var(--green); }
+  .bid { background:var(--redbg); border:2px solid var(--red); }
+  .box b.t { display:block; font-size:9.5pt; margin-bottom:2px; }
+  .nobid b.t { color:var(--green); } .bid b.t { color:var(--red); } .act b.t { color:var(--navy); }
+  .box ul { margin:2px 0 0; padding-left:14px; }
+  .box li { margin:1px 0; }
+  svg { position:absolute; left:0; top:0; overflow:visible; }
+  .lbl { font:700 8.5pt Inter,sans-serif; fill:var(--navy); }
+  .legend { position:absolute; left:0; bottom:0; font-size:8pt; color:#333; display:flex; gap:14px; align-items:center; }
+  .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:4px; }
+  .refs h2 { color:var(--navy); font-size:12pt; margin:10px 0 4px; }
+  .refs ol { margin:0; padding-left:26px; font-size:9pt; }
+  .refs li { margin:3px 0; }
+  .refs .u { color:#333; font-size:8pt; word-break:break-all; }
+</style>
+</head>
+<body>
+
+<section class="page">
+  <header>
+    <div><h1>Best Interest Determination (BID): When is one needed?</h1>
+    <div class="sub">McKinney-Vento school selection · City Schools McKinney-Vento Program · based on 42 U.S.C. § 11432(g)(3), COMAR 13A.05.09.04 and the MSDE BID FAQ</div></div>
+    <div class="draft">SAMPLE · DRAFT FOR REVIEW</div>
+  </header>
+
+  <div class="flow">
+    <div></div><div></div>
+    <div class="box start">Student identified as eligible for McKinney-Vento (liaison confirms)</div>
+    <div></div><div></div>
+
+    <div></div><div></div><div class="down"></div><div></div><div></div>
+
+    <div class="box nobid">
+      <b class="t">No BID needed: needs assessment &amp; support</b>
+      The school of origin is also the local school, so there's no school choice to make. Keep the student enrolled; assess needs (meals, uniforms, supplies, fees, health, academics) and refer as needed.
+    </div>
+    <div class="side left"><span>NO</span></div>
+    <div class="box q">Q1. Does the student's temporary residence put them outside the attendance zone of their school of origin?</div>
+    <div></div>
+    <div class="box note"><b>Every path:</b> immediate enrollment, needs assessment, confidentiality, and documentation. Liaison line: 443-642-2424</div>
+
+    <div></div><div></div><div class="down"><span>YES</span></div><div></div><div></div>
+
+    <div class="box nobid">
+      <b class="t">No formal BID: honor the choice</b>
+      The presumption for the school of origin doesn't apply when it's contrary to the parent's or youth's request. Enroll in the local school <b>immediately</b>, even without records; explain the right to stay in the school of origin and document the informed choice; needs assessment &amp; supports.
+    </div>
+    <div class="side left"><span>Local school</span></div>
+    <div class="box q">Q2. Which school does the parent / guardian or unaccompanied youth want?</div>
+    <div></div><div></div>
+
+    <div></div><div></div><div class="down"><span>School of origin, or unsure</span></div><div></div><div></div>
+
+    <div></div><div></div>
+    <div class="box q">Q3. Is the parent or youth unsure, or does the school system have concerns that the school of origin is <u>not</u> in the student's best interest?</div>
+    <div class="side right"><span>NO</span></div>
+    <div class="box nobid">
+      <b class="t">No formal BID: presumption stands</b>
+      Keep the student in the school of origin; arrange transportation; document the decision; needs assessment &amp; supports.
+    </div>
+
+    <div></div><div></div><div class="down"><span>YES</span></div><div></div><div></div>
+
+    <div class="box act">
+      <b class="t">Revisit when…</b>
+      <ul><li>The family moves again</li><li>The student moves up a school level (the feeder school counts as school of origin)</li><li>The student becomes permanently housed: they may stay in the school of origin for the rest of that school year, no new BID needed</li></ul>
+    </div>
+    <div></div>
+    <div class="box bid">
+      <b class="t">Formal BID meeting (liaison leads)</b>
+      Presume the school of origin is in the student's best interest and give priority to the parent's or youth's request. Consider student-centered factors:
+      <ul><li>Impact of moving on achievement, education, health and safety</li><li>Time left in the school year; age and grade; IEP / 504 / EL services</li><li>Attendance, relationships, the student's wishes; travel time (not cost)</li></ul>
+    </div>
+    <div class="side right"><span>Decide</span></div>
+    <div class="box act">
+      <b class="t">Decision</b>
+      <ul><li><b>Agree:</b> enroll in the chosen school; transportation to the school of origin if chosen; supports continue</li>
+      <li><b>School system decides against the parent's or youth's request:</b> <b>written explanation</b> and notice of the <b>right to appeal</b>. The student stays in the requested school, with transportation, while the dispute is resolved.</li></ul>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:var(--q);border:1.5px solid var(--gold)"></span>Question</span>
+    <span><span class="sw" style="background:var(--greenbg);border:1.5px solid var(--green)"></span>No formal BID: needs assessment &amp; support</span>
+    <span><span class="sw" style="background:var(--redbg);border:1.5px solid var(--red)"></span>Formal BID</span>
+  </div>
+</section>
+
+<section class="page refs">
+  <header><div><h1>References for the BID flowchart</h1><div class="sub">Each step on the flowchart and the source it comes from</div></div><div class="draft">SAMPLE · DRAFT FOR REVIEW</div></header>
+  <h2>Law and regulation</h2>
+  <ol>
+    <li><b>42 U.S.C. § 11432(g)(3)(A)–(B):</b> school of origin vs. local school; presumption for the school of origin unless contrary to the parent's or youth's request; student-centered factors; written explanation and right to appeal. <div class="u">uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section11432&amp;num=0&amp;edition=prelim</div></li>
+    <li><b>42 U.S.C. § 11432(g)(3)(A)(i)(II):</b> a student who becomes permanently housed may stay in the school of origin for the rest of the academic year. (Same link.)</li>
+    <li><b>42 U.S.C. § 11432(g)(3)(C), (E):</b> immediate enrollment; enrollment in the requested school while a dispute is resolved. (Same link.)</li>
+    <li><b>42 U.S.C. § 11432(g)(3)(I):</b> school of origin includes preschool and the designated receiving (feeder) school at the next grade level. (Same link.)</li>
+    <li><b>42 U.S.C. § 11432(g)(1)(J)(iii):</b> transportation to and from the school of origin. (Same link.)</li>
+    <li><b>COMAR 13A.05.09.04:</b> Maryland's school-placement rule for homeless students, including the steps the local school system follows for best interest. <div class="u">dsd.maryland.gov/regulations/Pages/13A.05.09.04.aspx</div></li>
+  </ol>
+  <h2>Maryland and national guidance</h2>
+  <ol start="7">
+    <li><b>MSDE, McKinney-Vento Best Interest Determinations FAQ:</b> when a BID is triggered, less formal vs. formal process, the LEA of origin's role, preschool, and when a formal meeting isn't needed. <div class="u">marylandpublicschools.org/about/Documents/DSFSS/Homeless/Best-Interest-Determination-FAQ-A.pdf</div></li>
+    <li><b>MSDE, McKinney-Vento Fact Sheet.</b> <div class="u">marylandpublicschools.org/about/Documents/DSFSS/Homeless/McKinney-Vento-Factsheet-A.pdf</div></li>
+    <li><b>NCHE, School Selection &amp; Best Interest</b> and the brief <i>Understanding and Implementing School Selection and Best Interest Under the McKinney-Vento Act</i>: presumption, student-centered factors, written explanation; transportation cost is not a factor. <div class="u">nche.ed.gov/school-selection/ · nche.ed.gov/school-selection-and-best-interest-determination-brief/</div></li>
+    <li><b>U.S. Department of Education, Education for Homeless Children and Youths Non-Regulatory Guidance (2017, updated 2018).</b> <div class="u">ed.gov (search "EHCY non-regulatory guidance")</div></li>
+    <li><b>SchoolHouse Connection, Interview Checklists for Supporting School Selection</b> (best practice). <div class="u">schoolhouseconnection.org/interview-checklists-for-supporting-school-selection/</div></li>
+    <li><b>NC Homeless Education Program, Considerations for Determining Best Interest</b> (best-practice factor checklist). <div class="u">hepnc.uncg.edu/wp-content/uploads/2025/08/Considerations-for-Determining-Best-Interest.pdf</div></li>
+  </ol>
+</section>
+
+</body>
+</html>
