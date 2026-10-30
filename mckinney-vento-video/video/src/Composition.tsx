@@ -185,7 +185,7 @@ const CAPTION_FIXES: [RegExp, string][] = [
   [/Fifty-seven hundred/g, "About 5,700"],
   [/one in four/g, "1 in 4"],
   [/one in thirteen/g, "1 in 13"],
-  [/four four three, nine eight four, two thousand/g, "443-984-2000"],
+  [/four four three, six four two, two four two four/g, "443-642-2424"],
 ];
 
 const Captions: React.FC<{ id: SceneId }> = ({ id }) => {
@@ -678,8 +678,8 @@ const Close: React.FC = () => (
         </div>
       </Card>
       <Card delay={at("close", 0.55)} style={{ flex: 1, borderColor: C.accent }}>
-        <div style={{ color: C.muted, fontSize: 32 }}>Baltimore City Public Schools</div>
-        <div style={{ color: C.accent, fontSize: 64, fontWeight: 800 }}>443-984-2000</div>
+        <div style={{ color: C.muted, fontSize: 32 }}>City Schools Homeless Education Liaison</div>
+        <div style={{ color: C.accent, fontSize: 64, fontWeight: 800 }}>443-642-2424</div>
         <div style={{ color: C.text, fontSize: 30 }}>
           baltimorecityschools.org/page/homeless-services
         </div>

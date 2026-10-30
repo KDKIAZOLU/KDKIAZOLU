@@ -62,7 +62,7 @@
 ## Scene 8: Close and contacts (2:45–3:00)
 **On screen:**
 - City Schools Office of Homeless Services: baltimorecityschools.org/page/homeless-services
-- Phone: **[CONFIRM: 443-984-2000 main line, or the office's direct line]**
+- Phone: **443-642-2424** (City Schools homeless education liaison)
 - Your school-based liaison: **[name/role]**
 - MSDE: Education for Homeless Children and Youth Program
 
