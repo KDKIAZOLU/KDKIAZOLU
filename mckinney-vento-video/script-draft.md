@@ -76,6 +76,6 @@
 - MSDE, McKinney-Vento Fact Sheet (2023): https://www.marylandpublicschools.org/about/Documents/DSFSS/Homeless/McKinneyVentoFactsheet2023.pdf
 - City Schools, Homeless Services: https://www.baltimorecityschools.org/page/homeless-services/
 - City Schools Board Policy JFE, Students Experiencing Homelessness: https://go.boarddocs.com/mabe/bcpss/Board.nsf/goto?open=&id=96DRWG6F891E
-- Maryland Matters (Sept. 2024), statewide 15,500+ figure: https://marylandmatters.org/2024/09/09/back-to-school-marylands-homeless-school-children/
+- Maryland Matters (Sept. 2024), earlier statewide figure (15,500+), not used in the video: https://marylandmatters.org/2024/09/09/back-to-school-marylands-homeless-school-children/
 - Maryland Matters / Capital News Service via Yahoo, Baltimore City 5,732 (2023–24): https://www.yahoo.com/news/maryland-homeless-students-increase-quarter-160100252.html
 - NCHE / SchoolHouse Connection, record 1.5M in 2023–24: https://e1.nmcdn.io/assets/schoolhouse/wp-content/uploads/2026/03/ED-numbers-2023-24.pdf
