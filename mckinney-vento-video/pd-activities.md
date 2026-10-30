@@ -128,4 +128,5 @@ Teams post their maps for a 3-minute gallery walk and leave one sticky-note idea
 ### Optional add-ons
 - **Quick quiz** (Kahoot, Mentimeter, or paper): reuse the Agree / Disagree statements and the Guess the Number questions.
 - **Timeline match-up:** cards with 1987, 2000, 2001, 2015 and the matching events from the video's history scene.
+- **Printable handouts:** `handouts/McKinney-Vento-PD-Handouts.pdf` (source: `handouts/handouts.html`).
 - **Resource handout:** the citywide liaison line (443-642-2424) and the City Schools McKinney-Vento Program page, plus the links in `SOURCES.md`.

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>McKinney-Vento PD Handouts</title>
+<style>
+  @page { size: Letter; margin: 0.5in; }
+  :root { --navy: #0B2545; --gold: #F2A900; --line: #9AA5B4; --soft: #EEF2F7; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, "Liberation Sans", sans-serif; color: #111; font-size: 11.5pt; line-height: 1.35; }
+  .page { page-break-after: always; break-after: page; height: 10in; display: flex; flex-direction: column; }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  header { border-bottom: 3px solid var(--gold); padding-bottom: 6px; margin-bottom: 14px; }
+  .kicker { color: var(--navy); font-size: 9pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  h1 { margin: 2px 0 0; font-size: 20pt; color: var(--navy); }
+  h2 { font-size: 13pt; color: var(--navy); margin: 14px 0 6px; }
+  p.lead { margin: 0 0 12px; color: #333; }
+  .footer { margin-top: auto; font-size: 8.5pt; color: #555; border-top: 1px solid #ddd; padding-top: 4px; }
+  .name { margin-bottom: 12px; }
+  .blank { display: inline-block; border-bottom: 1px solid #333; min-width: 2.6in; }
+
+  /* note-catcher */
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; }
+  .col { border: 2px solid var(--navy); border-radius: 8px; display: flex; flex-direction: column; }
+  .col h3 { margin: 0; background: var(--navy); color: #fff; padding: 8px 10px; font-size: 14pt; }
+  .col .prompt { padding: 6px 10px; font-size: 9.5pt; color: #333; background: var(--soft); }
+  .col .lines { flex: 1; margin: 6px 10px 10px; overflow: hidden; }
+
+  /* signs */
+  .sign { justify-content: center; align-items: center; text-align: center; }
+  .sign .big { font-size: 110pt; font-weight: 800; color: var(--navy); line-height: 1; }
+  .sign .bar { width: 60%; height: 14px; background: var(--gold); margin: 30px auto; }
+
+  /* cut cards */
+  .grid { display: grid; gap: 0; flex: 1; }
+  .g2x4 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); }
+  .g2x3 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); }
+  .g1x3 { grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr); }
+  .g2x2 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, 1fr); }
+  .card { border: 1px dashed #777; padding: 14px 16px; display: flex; flex-direction: column; }
+  .card .tag { font-size: 8.5pt; font-weight: 700; color: var(--navy); letter-spacing: 1px; text-transform: uppercase; }
+  .card .num { display: inline-block; background: var(--navy); color: #fff; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: 700; font-size: 10pt; margin-right: 6px; }
+  .card .body { font-size: 13pt; margin-top: 8px; }
+  .card .qs { margin-top: auto; font-size: 9.5pt; color: #333; }
+  .card .qs div { border-bottom: 1px solid var(--line); padding: 14px 0 2px; }
+  .cut { font-size: 8.5pt; color: #666; margin-bottom: 4px; }
+
+  /* sort mat */
+  .mat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; }
+  .mat div { border: 2px solid var(--navy); border-radius: 8px; padding: 10px; }
+  .mat strong { display: block; font-size: 14pt; color: var(--navy); }
+  .mat span { font-size: 9.5pt; color: #333; }
+
+  /* checklist */
+  ul.check { list-style: none; padding: 0; margin: 4px 0; }
+  ul.check li { padding: 3px 0 3px 24px; position: relative; font-size: 10.5pt; }
+  ul.check li::before { content: ""; position: absolute; left: 0; top: 5px; width: 13px; height: 13px; border: 1.5px solid #333; border-radius: 2px; }
+
+  /* action map */
+  .map { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; flex: 1; }
+  .map > div { border: 2px solid var(--navy); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; }
+  .map h3 { margin: 0 0 4px; color: var(--navy); font-size: 13pt; }
+  .map .hint { font-size: 9pt; color: #444; }
+  .map .lines { flex: 1; margin-top: 6px; overflow: hidden; }
+
+  /* exit ticket / slips */
+  .slip h3 { margin: 0 0 6px; color: var(--navy); font-size: 13pt; }
+  .slip .row { display: flex; gap: 8px; align-items: flex-end; margin-top: 7px; font-size: 10.5pt; }
+  .slip .row b { width: 22px; color: var(--navy); font-size: 13pt; }
+  .slip .row span { flex: 1; border-bottom: 1px solid #555; height: 16px; }
+
+  .rule { height: 30px; border-bottom: 1px solid var(--line); }
+
+  /* answer key */
+  table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+  th, td { border: 1px solid #bbb; padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: var(--soft); color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- 1. Note-catcher -->
+<section class="page">
+  <header><div class="kicker">McKinney-Vento PD · During the video</div><h1>Notice · Refer · Protect</h1></header>
+  <div class="name">Name / School: <span class="blank"></span></div>
+  <p class="lead">While you watch, jot at least one idea in each column. You'll use these notes in the group activities.</p>
+  <div class="cols">
+    <div class="col"><h3>Notice</h3><div class="prompt">Signs I might see in my classroom, office or hallway</div><div class="lines"></div></div>
+    <div class="col"><h3>Refer</h3><div class="prompt">Who I would tell, and how quickly</div><div class="lines"></div></div>
+    <div class="col"><h3>Protect</h3><div class="prompt">What I must keep private, and what must never become a barrier</div><div class="lines"></div></div>
+  </div>
+  <div class="footer">City Schools McKinney-Vento Liaison: 443-642-2424 · My school's McKinney-Vento liaison: ____________________</div>
+</section>
+
+<!-- 2. Agree / Disagree signs -->
+<section class="page sign">
+  <div class="big">AGREE</div><div class="bar"></div>
+  <div style="font-size:18pt;color:#333">Activity 1 · Agree / Disagree Line-Up</div>
+</section>
+<section class="page sign">
+  <div class="big">DISAGREE</div><div class="bar"></div>
+  <div style="font-size:18pt;color:#333">Activity 1 · Agree / Disagree Line-Up</div>
+</section>
+
+<!-- 3. Guess the Number slips -->
+<section class="page">
+  <header><div class="kicker">Activity 2 · Before the video</div><h1>Guess the Number</h1></header>
+  <div class="cut">✂ Cut along the dashed lines. One slip per table.</div>
+  <div class="grid g2x2">
+    <div class="card slip"><h3>Table guess</h3>
+      <div>How many Maryland students were identified as experiencing homelessness in 2023–24?</div>
+      <div class="row"><span></span></div>
+      <div style="margin-top:14px">How many of them were in Baltimore City?</div>
+      <div class="row"><span></span></div>
+    </div>
+    <div class="card slip"><h3>Table guess</h3>
+      <div>How many Maryland students were identified as experiencing homelessness in 2023–24?</div>
+      <div class="row"><span></span></div>
+      <div style="margin-top:14px">How many of them were in Baltimore City?</div>
+      <div class="row"><span></span></div>
+    </div>
+    <div class="card slip"><h3>Table guess</h3>
+      <div>How many Maryland students were identified as experiencing homelessness in 2023–24?</div>
+      <div class="row"><span></span></div>
+      <div style="margin-top:14px">How many of them were in Baltimore City?</div>
+      <div class="row"><span></span></div>
+    </div>
+    <div class="card slip"><h3>Table guess</h3>
+      <div>How many Maryland students were identified as experiencing homelessness in 2023–24?</div>
+      <div class="row"><span></span></div>
+      <div style="margin-top:14px">How many of them were in Baltimore City?</div>
+      <div class="row"><span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Card sort mat -->
+<section class="page">
+  <header><div class="kicker">Activity 4 · After the video</div><h1>Who Qualifies? Sorting Mat</h1></header>
+  <p class="lead">Place each scenario card in a column. Remember: staff don't decide eligibility; the McKinney-Vento liaison does. <b>When in doubt, refer.</b></p>
+  <div class="mat">
+    <div><strong>Likely eligible</strong><span>Refer to the McKinney-Vento liaison</span></div>
+    <div><strong>Not enough information</strong><span>Refer, and let the liaison decide</span></div>
+    <div><strong>Likely not eligible</strong><span>Fixed, regular and adequate housing</span></div>
+  </div>
+  <h2>Discuss</h2>
+  <p style="margin:0">Which cards caused the most debate? Why is "refer when unsure" the safest rule?</p>
+</section>
+
+<!-- 5. Card sort cards -->
+<section class="page">
+  <div class="cut">✂ Activity 4 · Who Qualifies? Scenario cards: cut along the dashed lines</div>
+  <div class="grid g2x4">
+    <div class="card"><div class="tag"><span class="num">1</span>Scenario</div><div class="body">Maya's family lost their apartment after a fire. They're staying in a relative's basement.</div></div>
+    <div class="card"><div class="tag"><span class="num">2</span>Scenario</div><div class="body">Andre's family lives in a motel because they can't afford a deposit on an apartment.</div></div>
+    <div class="card"><div class="tag"><span class="num">3</span>Scenario</div><div class="body">Jasmine, 17, left home after conflict with her parents and is sleeping at friends' houses.</div></div>
+    <div class="card"><div class="tag"><span class="num">4</span>Scenario</div><div class="body">The Lee family sold their house and is renting while their new home is built.</div></div>
+    <div class="card"><div class="tag"><span class="num">5</span>Scenario</div><div class="body">Carlos and his mom sleep in their car some nights and at a shelter on others.</div></div>
+    <div class="card"><div class="tag"><span class="num">6</span>Scenario</div><div class="body">Tiana's family moved in with her grandmother. Tiana mentions "we had to leave our old place."</div></div>
+    <div class="card"><div class="tag"><span class="num">7</span>Scenario</div><div class="body">A newly enrolled student has no records and says they're "staying with people."</div></div>
+    <div class="card"><div class="tag"><span class="num">8</span>Scenario</div><div class="body">Jordan lives in a trailer with no running water or electricity.</div></div>
+  </div>
+</section>
+
+<!-- 6. Barrier Busters -->
+<section class="page">
+  <div class="cut">✂ Activity 5 · Barrier Busters: one card per table</div>
+  <div class="grid g2x3">
+    <div class="card"><div class="tag"><span class="num">1</span>Barrier</div><div class="body">The front office tells a mother her son can't start until she brings a lease and immunization records.</div>
+      <div class="qs"><div>Right at stake:</div><div>What should happen:</div><div>Who we contact:</div></div></div>
+    <div class="card"><div class="tag"><span class="num">2</span>Barrier</div><div class="body">A student who moved to a shelter across town has missed four days because there's no way to get to school.</div>
+      <div class="qs"><div>Right at stake:</div><div>What should happen:</div><div>Who we contact:</div></div></div>
+    <div class="card"><div class="tag"><span class="num">3</span>Barrier</div><div class="body">A student can't go on a field trip because the $25 fee is overdue.</div>
+      <div class="qs"><div>Right at stake:</div><div>What should happen:</div><div>Who we contact:</div></div></div>
+    <div class="card"><div class="tag"><span class="num">4</span>Barrier</div><div class="body">A student keeps getting sent to the office for not wearing a uniform.</div>
+      <div class="qs"><div>Right at stake:</div><div>What should happen:</div><div>Who we contact:</div></div></div>
+    <div class="card"><div class="tag"><span class="num">5</span>Barrier</div><div class="body">A family and the school disagree about whether the student qualifies. The school says the student must stay home until it's resolved.</div>
+      <div class="qs"><div>Right at stake:</div><div>What should happen:</div><div>Who we contact:</div></div></div>
+    <div class="card"><div class="tag"><span class="num">6</span>Barrier</div><div class="body">A student hasn't eaten breakfast because the family hasn't filled out a meal form.</div>
+      <div class="qs"><div>Right at stake:</div><div>What should happen:</div><div>Who we contact:</div></div></div>
+  </div>
+</section>
+
+<!-- 7. Role-play -->
+<section class="page">
+  <div class="cut">✂ Activity 6 · The Right Words: one set per group of three. Rotate roles for each scenario.</div>
+  <div class="grid g1x3" style="flex:0 0 auto; height: 4.6in">
+    <div class="card"><div class="tag"><span class="num">A</span>Role-play</div><div class="body">A usually on-time 4th grader has been late all week, falling asleep in class, and wearing the same clothes.</div></div>
+    <div class="card"><div class="tag"><span class="num">B</span>Role-play</div><div class="body">A 10th grader mentions they've been "couch surfing" and asks you not to tell anyone.</div></div>
+    <div class="card"><div class="tag"><span class="num">C</span>Role-play</div><div class="body">A parent at pickup says they're "between places right now" and worried about their child changing schools.</div></div>
+  </div>
+  <h2>Observer checklist</h2>
+  <ul class="check">
+    <li>Spoke privately, not in front of others</li>
+    <li>Used neutral words ("Where are you staying right now?") rather than "Are you homeless?"</li>
+    <li>Didn't promise secrecy they can't keep, but explained that information is shared only with people who can help</li>
+    <li>Named the next step: the school's McKinney-Vento liaison</li>
+    <li>Didn't make the student or family prove anything</li>
+  </ul>
+  <h2>Phrases that worked</h2>
+  <div class="lines" style="flex:1;overflow:hidden"></div>
+</section>
+
+<!-- 8. School Action Map -->
+<section class="page">
+  <header><div class="kicker">Activity 7 · Closing</div><h1>Our School Action Map</h1></header>
+  <div class="name">School: <span class="blank"></span></div>
+  <div class="map">
+    <div><h3>1. Our McKinney-Vento liaison</h3><div class="hint">Name, room, extension. Citywide line: 443-642-2424</div><div class="lines"></div></div>
+    <div><h3>2. Where students might be noticed</h3><div class="hint">Front office, attendance, nurse, cafeteria, buses, coaches…</div><div class="lines"></div></div>
+    <div><h3>3. Our referral steps</h3><div class="hint">Who tells whom, how quickly, and how it stays confidential</div><div class="lines"></div></div>
+    <div><h3>4. One barrier we'll remove this month</h3><div class="hint">Uniform closet, grab-and-go breakfast, front-office enrollment script…</div><div class="lines"></div></div>
+  </div>
+</section>
+
+<!-- 9. Exit tickets -->
+<section class="page">
+  <div class="cut">✂ Activity 8 · 3-2-1 Exit Ticket: three per page</div>
+  <div class="grid g1x3">
+    <div class="card slip"><h3>3-2-1 Exit Ticket</h3>
+      <div><b>3</b> signs a student might be experiencing homelessness</div>
+      <div class="row"><b>1</b><span></span></div><div class="row"><b>2</b><span></span></div><div class="row"><b>3</b><span></span></div>
+      <div style="margin-top:8px"><b>2</b> rights a student has under McKinney-Vento</div>
+      <div class="row"><b>1</b><span></span></div><div class="row"><b>2</b><span></span></div>
+      <div style="margin-top:8px"><b>1</b> person at my school I'll contact</div>
+      <div class="row"><b>1</b><span></span></div>
+    </div>
+    <div class="card slip"><h3>3-2-1 Exit Ticket</h3>
+      <div><b>3</b> signs a student might be experiencing homelessness</div>
+      <div class="row"><b>1</b><span></span></div><div class="row"><b>2</b><span></span></div><div class="row"><b>3</b><span></span></div>
+      <div style="margin-top:8px"><b>2</b> rights a student has under McKinney-Vento</div>
+      <div class="row"><b>1</b><span></span></div><div class="row"><b>2</b><span></span></div>
+      <div style="margin-top:8px"><b>1</b> person at my school I'll contact</div>
+      <div class="row"><b>1</b><span></span></div>
+    </div>
+    <div class="card slip"><h3>3-2-1 Exit Ticket</h3>
+      <div><b>3</b> signs a student might be experiencing homelessness</div>
+      <div class="row"><b>1</b><span></span></div><div class="row"><b>2</b><span></span></div><div class="row"><b>3</b><span></span></div>
+      <div style="margin-top:8px"><b>2</b> rights a student has under McKinney-Vento</div>
+      <div class="row"><b>1</b><span></span></div><div class="row"><b>2</b><span></span></div>
+      <div style="margin-top:8px"><b>1</b> person at my school I'll contact</div>
+      <div class="row"><b>1</b><span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. Answer key -->
+<section class="page">
+  <header><div class="kicker">Facilitator only · do not distribute</div><h1>Answer Key</h1></header>
+  <h2>Activity 1 · Agree / Disagree statements</h2>
+  <table>
+    <tr><th>Statement</th><th>Answer</th></tr>
+    <tr><td>1. A student living with their aunt's family because they were evicted counts as homeless under federal law.</td><td>Agree: doubled up because of lost housing</td></tr>
+    <tr><td>2. A school can wait to enroll a student until the family brings proof of address.</td><td>Disagree: enrollment is immediate, even without records</td></tr>
+    <tr><td>3. A student who moves to a shelter across the city has to change schools.</td><td>Disagree: can stay in school of origin when in their best interest, with transportation</td></tr>
+    <tr><td>4. Teachers should tell the class when a student is homeless, so classmates can help.</td><td>Disagree: housing status is confidential</td></tr>
+    <tr><td>5. A 16-year-old living on their own, without a parent, can enroll themselves in school.</td><td>Agree: unaccompanied youth are covered and enrolled right away</td></tr>
+  </table>
+  <h2>Activity 2 · Guess the Number</h2>
+  <p style="margin:0">20,402 statewide; 5,732 in Baltimore City (MSDE, 2023–24). That's more than 1 in 4 of the state total and about 1 in 13 City Schools students, or about 38 students in a school of 500.</p>
+  <h2>Activity 4 · Who Qualifies?</h2>
+  <table>
+    <tr><th>Likely eligible</th><th>Not enough information: refer</th><th>Likely not eligible</th></tr>
+    <tr><td>1 (doubled up after fire), 2 (motel, no alternative), 3 (unaccompanied youth), 5 (car and shelter), 8 (inadequate housing)</td><td>6 (reason for the move matters), 7 (needs a private conversation with the liaison)</td><td>4 (planned move, fixed and adequate housing)</td></tr>
+  </table>
+  <h2>Activity 5 · Barrier Busters</h2>
+  <table>
+    <tr><th>#</th><th>Right at stake → what should happen</th></tr>
+    <tr><td>1</td><td>Immediate enrollment without records; the liaison helps get them afterward</td></tr>
+    <tr><td>2</td><td>School of origin with transportation; call the McKinney-Vento liaison right away</td></tr>
+    <tr><td>3</td><td>Full access to activities; fee waivers through the McKinney-Vento Program</td></tr>
+    <tr><td>4</td><td>Uniforms and clothing are available through the program; don't discipline for what the student can't control</td></tr>
+    <tr><td>5</td><td>Student is enrolled and attends while the dispute is resolved</td></tr>
+    <tr><td>6</td><td>Automatic eligibility for free meals; no form needed</td></tr>
+  </table>
+  <div class="footer">Sources: 42 U.S.C. §§ 11431–11435 and § 1758(b)(12); MSDE Homeless Education Trend Data 2018–2024. Full list in SOURCES.md.</div>
+</section>
+
+<script>
+  // Fill each writing area with as many ruled lines as fit.
+  for (const box of document.querySelectorAll(".lines")) {
+    const n = Math.floor(box.clientHeight / 31);
+    for (let i = 0; i < n; i++) box.appendChild(Object.assign(document.createElement("div"), { className: "rule" }));
+  }
+</script>
+</body>
+</html>
