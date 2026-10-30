@@ -57,7 +57,7 @@
   ul.check li::before { content: ""; position: absolute; left: 0; top: 5px; width: 13px; height: 13px; border: 1.5px solid #333; border-radius: 2px; }
 
   /* action map */
-  .map { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; flex: 1; }
+  .map { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0,1fr) minmax(0,1fr); gap: 10px; flex: 1; }
   .map > div { border: 2px solid var(--navy); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; }
   .map h3 { margin: 0 0 4px; color: var(--navy); font-size: 13pt; }
   .map .hint { font-size: 9pt; color: #444; }
@@ -65,11 +65,15 @@
 
   /* exit ticket / slips */
   .slip h3 { margin: 0 0 6px; color: var(--navy); font-size: 13pt; }
-  .slip .row { display: flex; gap: 8px; align-items: flex-end; margin-top: 7px; font-size: 10.5pt; }
+  .slip .row { display: flex; gap: 8px; align-items: flex-end; margin-top: 4px; font-size: 10.5pt; }
+  .g1x3 .slip { padding: 10px 16px; }
   .slip .row b { width: 22px; color: var(--navy); font-size: 13pt; }
   .slip .row span { flex: 1; border-bottom: 1px solid #555; height: 16px; }
 
   .rule { height: 30px; border-bottom: 1px solid var(--line); }
+
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .chip { border: 1.5px solid var(--navy); border-radius: 18px; padding: 6px 8px; font-size: 9.5pt; text-align: center; font-weight: 600; color: var(--navy); }
 
   /* answer key */
   table { width: 100%; border-collapse: collapse; font-size: 10pt; }
@@ -181,6 +185,50 @@
   </div>
 </section>
 
+<!-- 6b. Cross-department: case cards -->
+<section class="page">
+  <div class="cut">✂ Activity 5B · Who Else Needs to Know? Case cards: one or two per table</div>
+  <div class="grid g2x4">
+    <div class="card"><div class="tag"><span class="num">1</span>Case</div><div class="body" style="font-size:11.5pt"><b>Ms. Rivera</b> enrolls her daughter, who has an IEP from another state, after the family's apartment was condemned. The family is at a shelter. The student has had no special education services for three weeks.</div></div>
+    <div class="card"><div class="tag"><span class="num">2</span>Case</div><div class="body" style="font-size:11.5pt"><b>Kwame, 9,</b> arrived from Ghana with his father. They're staying with a church member's family. His father speaks Twi and limited English and has no school records.</div></div>
+    <div class="card"><div class="tag"><span class="num">3</span>Case</div><div class="body" style="font-size:11.5pt"><b>Destiny,</b> a senior, has been staying with friends since her mother's eviction. She wants to apply for college financial aid but can't get her parent's information.</div></div>
+    <div class="card"><div class="tag"><span class="num">4</span>Case</div><div class="body" style="font-size:11.5pt"><b>Malik, 7,</b> comes to school hungry, with untreated tooth pain, and says he's living in "the car with Mom." He mentions an adult at the car hurts him when Mom isn't there.</div></div>
+    <div class="card"><div class="tag"><span class="num">5</span>Case</div><div class="body" style="font-size:11.5pt"><b>The Thompson children</b> (pre-K, 2nd grade and 6th grade) moved to a motel near the county line. The pre-K child lost her spot, and the two older siblings have missed a week.</div></div>
+    <div class="card"><div class="tag"><span class="num">6</span>Case</div><div class="body" style="font-size:11.5pt"><b>Aaliyah, 15,</b> is doubled up with a relative. She's withdrawn, says she "doesn't see the point anymore," and has stopped turning in work.</div></div>
+    <div class="card"><div class="tag"><span class="num">7</span>Case</div><div class="body" style="font-size:11.5pt"><b>Jayden,</b> a junior, moved to a shelter mid-semester. He's on the varsity basketball team, is two credits behind, and was told his partial coursework from his old school "doesn't count."</div></div>
+    <div class="card"><div class="tag"><span class="num">8</span>Case</div><div class="body" style="font-size:11.5pt"><b>A family of four</b> shows up at the front office the morning after losing their housing. The children have no immunization records and the parent is worried about being reported.</div></div>
+  </div>
+</section>
+
+<!-- 6c. Cross-department: chips and planning sheet -->
+<section class="page">
+  <header><div class="kicker">Activity 5B · After the video</div><h1>Who Else Needs to Know?</h1></header>
+  <div class="name">Case #: <span class="blank" style="min-width:0.8in"></span> &nbsp; Table: <span class="blank" style="min-width:1.2in"></span></div>
+  <p class="lead">Circle every department this case needs. The McKinney-Vento liaison coordinates, but others act too. Share only the information each office needs; housing status is confidential.</p>
+  <div class="chips">
+    <div class="chip">McKinney-Vento liaison</div>
+    <div class="chip">Counselor / social worker</div>
+    <div class="chip">Special education / IEP team</div>
+    <div class="chip">ESOL / English learner office</div>
+    <div class="chip">School nurse / health services</div>
+    <div class="chip">Transportation</div>
+    <div class="chip">Food and nutrition services</div>
+    <div class="chip">Attendance</div>
+    <div class="chip">Child Protective Services (mandated report)</div>
+    <div class="chip">School psychologist / behavioral health</div>
+    <div class="chip">Early childhood / Pre-K</div>
+    <div class="chip">College and career / financial aid</div>
+    <div class="chip">Athletics and activities</div>
+    <div class="chip">Registrar / enrollment</div>
+  </div>
+  <div class="map" style="margin-top:12px; flex:none; height:5.6in; grid-template-rows:minmax(0,1fr) minmax(0,1fr)">
+    <div><h3>Who acts first?</h3><div class="hint">Name the office and the first action. Is anything required today?</div><div class="lines"></div></div>
+    <div><h3>Who else, and what do they do?</h3><div class="hint">List each department and its role</div><div class="lines"></div></div>
+    <div><h3>What does each office need to know?</h3><div class="hint">Minimum information only</div><div class="lines"></div></div>
+    <div><h3>Where could the hand-off break down?</h3><div class="hint">And how will we prevent it?</div><div class="lines"></div></div>
+  </div>
+</section>
+
 <!-- 7. Role-play -->
 <section class="page">
   <div class="cut">✂ Activity 6 · The Right Words: one set per group of three. Rotate roles for each scenario.</div>
@@ -274,6 +322,23 @@
     <tr><td>6</td><td>Automatic eligibility for free meals; no form needed</td></tr>
   </table>
   <div class="footer">Sources: 42 U.S.C. §§ 11431–11435 and § 1758(b)(12); MSDE Homeless Education Trend Data 2018–2024. Full list in SOURCES.md.</div>
+</section>
+
+<!-- 11. Answer key: cross-department -->
+<section class="page">
+  <header><div class="kicker">Facilitator only · do not distribute</div><h1>Answer Key: Who Else Needs to Know?</h1></header>
+  <table>
+    <tr><th style="width:5%">Case</th><th style="width:30%">Departments</th><th>First step and key points</th></tr>
+    <tr><td>1</td><td>McKinney-Vento liaison, special education / IEP team, transportation</td><td>Enroll immediately and provide services comparable to the existing IEP right away; the liaison and IEP team coordinate records and transportation to the school of origin if that's in the student's best interest.</td></tr>
+    <tr><td>2</td><td>McKinney-Vento liaison, ESOL office, registrar, nurse</td><td>Enroll immediately without records; interpreter for the father; ESOL screening; the liaison helps obtain records and immunizations.</td></tr>
+    <tr><td>3</td><td>McKinney-Vento liaison, counselor, college and career / financial aid</td><td>The liaison can verify Destiny is an unaccompanied homeless youth, so she can apply for financial aid as an independent student without her parent's information.</td></tr>
+    <tr><td>4</td><td>Child Protective Services (mandated report), McKinney-Vento liaison, nurse, food services, counselor / social worker</td><td>The disclosure of harm requires a mandated report today. Living in a car is not, by itself, neglect; the report is about the abuse. Meet basic needs: meals, dental referral, and the liaison connects the family to shelter and services.</td></tr>
+    <tr><td>5</td><td>McKinney-Vento liaison, early childhood / Pre-K, transportation, attendance</td><td>School of origin with transportation if in each child's best interest; restore the pre-K placement (preschoolers are covered); attendance supports, not penalties.</td></tr>
+    <tr><td>6</td><td>Counselor / social worker, school psychologist / behavioral health, McKinney-Vento liaison</td><td>"Doesn't see the point" may signal suicide risk: follow the school's crisis protocol the same day, then ongoing support and removal of academic barriers.</td></tr>
+    <tr><td>7</td><td>McKinney-Vento liaison, registrar / counselor, athletics</td><td>Procedures must exist to award partial credit for work done at the previous school; work with athletics to remove barriers to staying on the team; transportation to school of origin if in his best interest.</td></tr>
+    <tr><td>8</td><td>Registrar / front office, McKinney-Vento liaison, nurse, food services</td><td>Enroll the same day without immunization records; liaison and nurse help get records; free meals start right away. Losing housing is not a reason for a report; keep the situation confidential.</td></tr>
+  </table>
+  <div class="footer">Close the activity by asking: "Where do hand-offs between offices usually break down at our school?"</div>
 </section>
 
 <script>

@@ -9,6 +9,7 @@ A facilitator guide for a 60–75 minute session built around the video *McKinne
 | 3 | Notice · Refer · Protect note-catcher | During the video | 4 min (video) | Individual |
 | 4 | Who Qualifies? Card Sort | After the video | 15 min | Tables of 3–5 |
 | 5 | Barrier Busters | After the video | 15 min | Tables of 3–5 |
+| 5B | Who Else Needs to Know? Cross-department cases | After the video | 20 min | Tables of 3–5 |
 | 6 | The Right Words: Role-Play | After the video | 10 min | Groups of 3 |
 | 7 | School Action Map | Closing | 10 min | School teams |
 | 8 | 3-2-1 Exit Ticket | Closing | 5 min | Individual |
@@ -88,6 +89,41 @@ Each table gets one situation. In 5 minutes they decide: *What right is at stake
 4. Uniforms and clothing are available through the program; avoid discipline for something the student can't control.
 5. The student is enrolled and attends while the dispute is resolved.
 6. Students experiencing homelessness are automatically eligible for free meals; no form is needed.
+
+## 5B. Who Else Needs to Know? Cross-department cases (after the video)
+
+Many students experiencing homelessness need help from more than one office. In this activity, tables plan who works together on a case. The McKinney-Vento liaison coordinates, but other departments act too.
+
+Give each table one or two case cards and the **Department Chips** sheet. In 10 minutes each table decides:
+1. Which departments need to be involved? Circle or place their chips.
+2. Who acts first, and what do they do?
+3. What information does each department actually need? Share only that much, because housing status is confidential.
+
+Each table reports back in 1 minute. Close by asking: *"Where do hand-offs between offices usually break down at our school?"*
+
+**Department chips:** McKinney-Vento liaison · School counselor / social worker · Special education / IEP team · ESOL / English learner office · School nurse / health services · Transportation · Food and nutrition services · Attendance · Child Protective Services (mandated reporting) · School psychologist / behavioral health · Early childhood / Pre-K · College and career / financial aid · Athletics and activities · Registrar / enrollment
+
+**Case cards:**
+1. **Ms. Rivera** enrolls her daughter, who has an IEP from another state, after the family's apartment was condemned. The family is at a shelter. The student has had no special education services for three weeks.
+2. **Kwame**, 9, arrived from Ghana with his father. They're staying with a church member's family. His father speaks Twi and limited English and has no school records.
+3. **Destiny**, a senior, has been staying with friends since her mother's eviction. She wants to apply for college financial aid but can't get her parent's information.
+4. **Malik**, 7, comes to school hungry, with untreated tooth pain, and says he's living in "the car with Mom." He mentions an adult at the car hurts him when Mom isn't there.
+5. **The Thompson children** (pre-K, 2nd grade and 6th grade) moved to a motel near the county line. The pre-K child lost her spot, and the two older siblings have missed a week.
+6. **Aaliyah**, 15, is doubled up with a relative. She's withdrawn, says she "doesn't see the point anymore," and has stopped turning in work.
+7. **Jayden**, a junior, moved to a shelter mid-semester. He's on the varsity basketball team, is two credits behind, and was told his partial coursework from his old school "doesn't count."
+8. **A family of four** shows up at the front office the morning after losing their housing. The children have no immunization records and the parent is worried about being reported.
+
+**Answer key (suggested teams):**
+| Case | Departments | First step and key points |
+|---|---|---|
+| 1 | McKinney-Vento liaison, special education / IEP team, transportation | Enroll immediately and provide services comparable to the existing IEP right away; the liaison and IEP team coordinate records and transportation to the school of origin if that's in the student's best interest. |
+| 2 | McKinney-Vento liaison, ESOL office, registrar, nurse | Enroll immediately without records; provide an interpreter for the father; ESOL screening; the liaison helps obtain records and immunizations. |
+| 3 | McKinney-Vento liaison, counselor, college and career / financial aid | The liaison can verify that Destiny is an unaccompanied homeless youth, so she can apply for financial aid as an independent student without her parent's information. |
+| 4 | Report to Child Protective Services immediately (mandated reporting), plus McKinney-Vento liaison, nurse, food services, counselor / social worker | The disclosure of harm triggers a mandated report today. Living in a car is not, by itself, neglect; the report is about the abuse. Meet basic needs: meals, dental referral, and the liaison connects the family to shelter and services. |
+| 5 | McKinney-Vento liaison, early childhood / Pre-K, transportation, attendance | Keep each child in their school of origin if that's in their best interest, with transportation; restore the pre-K placement (McKinney-Vento covers preschoolers); attendance supports instead of penalties. |
+| 6 | Counselor / social worker, school psychologist / behavioral health, McKinney-Vento liaison | "Doesn't see the point" may signal suicide risk: follow your school's crisis protocol the same day. Then connect her with ongoing support and remove academic barriers. |
+| 7 | McKinney-Vento liaison, registrar / counselor, athletics | The district must have procedures to award partial credit for work completed at the previous school; work with athletics to remove barriers to staying on the team; transportation to his school of origin if that's in his best interest. |
+| 8 | Registrar / front office, McKinney-Vento liaison, nurse, food services | Enroll the children the same day without immunization records; the liaison and nurse help get records; free meals start right away. Reassure the parent that losing housing is not a reason for a report, and keep their situation confidential. |
 
 ## 6. The Right Words: Role-Play (after the video)
 
