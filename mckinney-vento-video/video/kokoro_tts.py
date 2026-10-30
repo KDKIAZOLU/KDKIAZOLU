@@ -1,26 +1,29 @@
 """Kokoro neural voice for make_audio.py (`python3 make_audio.py kokoro`).
 
-Needs huggingface.co reachable and: pip install kokoro-onnx soundfile numpy
-Weights come from the onnx-community/Kokoro-82M-v1.0-ONNX repo on Hugging Face.
+Needs github.com reachable and: pip install kokoro-onnx soundfile
+Weights are the Kokoro-82M v1.0 files published with kokoro-onnx's GitHub release.
 """
 import os
+import re
 import urllib.request
 
-import numpy as np
 import soundfile as sf
 
-REPO = "https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main"
+REPO = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0"
 VOICE = os.environ.get("KOKORO_VOICE", "af_heart")
 CACHE = os.path.join(os.path.dirname(__file__), ".kokoro")
+
+# Spoken-only respellings; narration.json keeps the real spelling for captions.
+PRONOUNCE = {r"\bMcKinney": "MacKinney"}  # "Mc" as "Mac", not "muh"
 
 _engine = None
 
 
-def _fetch(path: str) -> str:
+def _fetch(name: str) -> str:
     os.makedirs(CACHE, exist_ok=True)
-    dst = os.path.join(CACHE, os.path.basename(path))
+    dst = os.path.join(CACHE, name)
     if not os.path.exists(dst):
-        urllib.request.urlretrieve(f"{REPO}/{path}", dst)
+        urllib.request.urlretrieve(f"{REPO}/{name}", dst)
     return dst
 
 
@@ -29,14 +32,12 @@ def _load():
     if _engine is None:
         from kokoro_onnx import Kokoro
 
-        model = _fetch("onnx/model_quantized.onnx")
-        style = np.fromfile(_fetch(f"voices/{VOICE}.bin"), dtype=np.float32)
-        voices = os.path.join(CACHE, "voices.npz")
-        np.savez(voices, **{VOICE: style.reshape(-1, 1, 256)})
-        _engine = Kokoro(model, voices)
+        _engine = Kokoro(_fetch("kokoro-v1.0.onnx"), _fetch("voices-v1.0.bin"))
     return _engine
 
 
 def synth(text: str, out_path: str) -> None:
+    for pattern, spoken in PRONOUNCE.items():
+        text = re.sub(pattern, spoken, text)
     samples, sr = _load().create(text, voice=VOICE, speed=0.95, lang="en-us")
     sf.write(out_path, samples, sr)
