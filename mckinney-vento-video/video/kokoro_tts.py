@@ -4,7 +4,6 @@ Needs github.com reachable and: pip install kokoro-onnx soundfile
 Weights are the Kokoro-82M v1.0 files published with kokoro-onnx's GitHub release.
 """
 import os
-import re
 import urllib.request
 
 import soundfile as sf
@@ -13,8 +12,10 @@ REPO = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-file
 VOICE = os.environ.get("KOKORO_VOICE", "af_heart")
 CACHE = os.path.join(os.path.dirname(__file__), ".kokoro")
 
-# Spoken-only respellings; narration.json keeps the real spelling for captions.
-PRONOUNCE = {r"\bMcKinney": "MacKinney"}  # "Mc" as "Mac", not "muh"
+# Spoken-only phoneme fixes; narration.json keeps the real spelling for captions.
+# espeak says McKinney as "muh-KIN-ee"; use a light, unstressed "mac" with the
+# stress kept on "KIN" and no doubled k.
+PRONOUNCE = {"mə kˈɪni": "mækˈɪni"}
 
 _engine = None
 
@@ -37,7 +38,9 @@ def _load():
 
 
 def synth(text: str, out_path: str) -> None:
-    for pattern, spoken in PRONOUNCE.items():
-        text = re.sub(pattern, spoken, text)
-    samples, sr = _load().create(text, voice=VOICE, speed=0.95, lang="en-us")
+    engine = _load()
+    phonemes = engine.tokenizer.phonemize(text, "en-us")
+    for default, spoken in PRONOUNCE.items():
+        phonemes = phonemes.replace(default, spoken)
+    samples, sr = engine.create(phonemes, voice=VOICE, speed=0.95, is_phonemes=True)
     sf.write(out_path, samples, sr)

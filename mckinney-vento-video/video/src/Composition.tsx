@@ -17,6 +17,7 @@ import narration from "../narration.json";
 const FPS = 30;
 const PAD_BEFORE = 12; // frames of silence before each scene's voiceover
 const PAD_AFTER = 18; // frames of hold after the voiceover ends
+const SOURCES_HOLD = 300; // extra frames so viewers can read the source list
 
 const C = {
   bg: "#0B2545",
@@ -32,7 +33,10 @@ const FONT = "Inter, 'Liberation Sans', sans-serif";
 type SceneId = keyof typeof durations;
 
 const sceneFrames = (id: SceneId) =>
-  PAD_BEFORE + Math.ceil(durations[id] * FPS) + PAD_AFTER;
+  PAD_BEFORE +
+  Math.ceil(durations[id] * FPS) +
+  PAD_AFTER +
+  (id === "sources" ? SOURCES_HOLD : 0);
 
 const ORDER: SceneId[] = [
   "hook",
@@ -44,6 +48,7 @@ const ORDER: SceneId[] = [
   "services",
   "role",
   "close",
+  "sources",
 ];
 
 const TOTAL = ORDER.reduce((sum, id) => sum + sceneFrames(id), 0);
@@ -688,6 +693,49 @@ const Close: React.FC = () => (
   </SceneFrame>
 );
 
+const SOURCE_LIST: [string, string][] = [
+  ["McKinney-Vento Act, 42 U.S.C. §§ 11431–11435", "uscode.house.gov/view.xhtml?path=/prelim@title42/chapter119/subchapter6/partB&edition=prelim"],
+  ["National Center for Homeless Education", "nche.ed.gov/legislation/mckinney-vento/"],
+  ["1987 McKinney Act, P.L. 100-77", "congress.gov/bill/100th-congress/house-bill/558"],
+  ["2000 renaming, P.L. 106-400", "govinfo.gov/link/plaw/106/public/400"],
+  ["President Clinton signing statement, Oct. 30, 2000", "clintonwhitehouse4.archives.gov/textonly/library/hot_releases/October_30_2000_4.html"],
+  ["No Child Left Behind Act, P.L. 107-110", "congress.gov/bill/107th-congress/house-bill/1"],
+  ["Every Student Succeeds Act, P.L. 114-95", "congress.gov/bill/114th-congress/senate-bill/1177"],
+  ["MSDE Homeless Education Trend Data 2018–2024", "marylandpublicschools.org/about/Documents/DSFSS/Homeless/HomelessEducationTrendData2018-2024-A.pdf"],
+  ["MSDE McKinney-Vento program", "marylandpublicschools.org/about/Pages/dsfss/homeless/index.aspx"],
+  ["MSDE McKinney-Vento Fact Sheet (2023)", "marylandpublicschools.org/about/Documents/DSFSS/Homeless/McKinneyVentoFactsheet2023.pdf"],
+  ["MSDE McKinney-Vento LEA coordinators", "marylandpublicschools.org/about/Documents/DSFSS/Homeless/McKinneyVentoLEACoordinators-A.pdf"],
+  ["City Schools McKinney-Vento Program", "baltimorecityschools.org/page/homeless-services/"],
+  ["City Schools Board Policy JFE", "go.boarddocs.com/mabe/bcpss/Board.nsf/goto?open=&id=96DRWG6F891E"],
+  ["Free meals eligibility, 42 U.S.C. § 1758(b)(12)", "uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title42-section1758&num=0&edition=prelim"],
+  ["City Schools enrollment, NCES Common Core of Data", "nces.ed.gov/ccd/districtsearch/district_detail.asp?ID2=2400090"],
+  ["Baltimore Sun / Capital News Service", "yahoo.com/news/maryland-homeless-students-increase-quarter-160100252.html"],
+];
+
+const Sources: React.FC = () => (
+  <AbsoluteFill style={{ padding: "70px 110px 150px 110px", fontFamily: FONT }}>
+    <Kicker>References</Kicker>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        columnGap: 56,
+        rowGap: 18,
+        marginTop: 6,
+      }}
+    >
+      {SOURCE_LIST.map(([label, url], i) => (
+        <Enter key={url} delay={6 + i * 2}>
+          <div style={{ color: C.text, fontSize: 24, fontWeight: 700 }}>{label}</div>
+          <div style={{ color: C.muted, fontSize: 18, wordBreak: "break-all", lineHeight: 1.3 }}>
+            {url}
+          </div>
+        </Enter>
+      ))}
+    </div>
+  </AbsoluteFill>
+);
+
 const SCENES: Record<SceneId, React.FC> = {
   hook: Hook,
   law: Law,
@@ -698,6 +746,7 @@ const SCENES: Record<SceneId, React.FC> = {
   services: Services,
   role: Role,
   close: Close,
+  sources: Sources,
 };
 
 // ---------- main ----------
