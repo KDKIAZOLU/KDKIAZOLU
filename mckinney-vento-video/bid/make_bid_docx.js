@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const {
-  Document, Packer, Paragraph, TextRun, ImageRun, Table, TableRow, TableCell,
+  Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
   Header, Footer, AlignmentType, PageOrientation, WidthType, BorderStyle,
   ShadingType, LevelFormat, PageNumber, HeadingLevel, ExternalHyperlink, PageBreak,
 } = require("docx");
@@ -111,15 +111,110 @@ const footer = (label) =>
     ],
   });
 
-// ---------- section 1: flowchart (landscape) ----------
-const img = fs.readFileSync(path.join(__dirname, "bid-flowchart.png"));
-const imgW = 880; // px at 96 dpi ≈ 9.2 in
+// ---------- section 1: flowchart (landscape), built from table cells so every box is editable ----------
+const GREEN = "1E7B4F", GREENBG = "E8F5EE", RED = "B03A2E", REDBG = "FBECEA", QBG = "FFF6DD";
+const none = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+const noBorders = { top: none, bottom: none, left: none, right: none };
+const line12 = (color, style = BorderStyle.SINGLE) => ({ style, size: 12, color });
+const fcol = [3500, 950, 4300, 950, 3980]; // sums to W_LANDSCAPE
+const fs8 = 16; // 8 pt
+const fp = (runs, o = {}) => new Paragraph({ spacing: { after: 20 }, children: runs, ...o });
+const kinds = {
+  start: { fill: NAVY, border: NAVY },
+  q: { fill: QBG, border: GOLD },
+  nobid: { fill: GREENBG, border: GREEN, title: GREEN },
+  bid: { fill: REDBG, border: RED, title: RED },
+  act: { fill: "FFFFFF", border: NAVY, title: NAVY },
+  note: { fill: SOFT, border: NAVY, dashed: true },
+};
+const fbox = (kind, title, body, items = []) => {
+  const k = kinds[kind];
+  const b = line12(k.border, k.dashed ? BorderStyle.DASHED : BorderStyle.SINGLE);
+  const children = [];
+  if (kind === "start" || kind === "q")
+    children.push(fp([t(title, { size: fs8 + 1, bold: true, color: kind === "start" ? "FFFFFF" : "111111" })], { alignment: AlignmentType.CENTER }));
+  else {
+    if (title) children.push(fp([t(title, { size: fs8 + 2, bold: true, color: k.title || "111111" })]));
+    if (body) children.push(fp(Array.isArray(body) ? body : [t(body, { size: fs8 })]));
+    for (const it of items)
+      children.push(new Paragraph({ numbering: { reference: "bullets", level: 0 }, spacing: { after: 10 }, children: Array.isArray(it) ? it : [t(it, { size: fs8 })] }));
+  }
+  return { children, fill: k.fill, borders: { top: b, bottom: b, left: b, right: b } };
+};
+const arrow = (text, dir) => ({
+  children: dir === "down"
+    ? [fp([t("\u2193 ", { size: 24, bold: true, color: NAVY }), t(text, { size: fs8, bold: true, color: NAVY })], { alignment: AlignmentType.CENTER, spacing: { after: 0 } })]
+    : [fp([t(text, { size: fs8, bold: true, color: NAVY })], { alignment: AlignmentType.CENTER, spacing: { after: 0 } }),
+       fp([t(dir === "left" ? "\u2190" : "\u2192", { size: 28, bold: true, color: NAVY })], { alignment: AlignmentType.CENTER, spacing: { after: 0 } })],
+});
+const empty = { children: [fp([], { spacing: { after: 0 } })] };
+const frow = (cells) =>
+  new TableRow({
+    cantSplit: true,
+    children: cells.map((c, i) =>
+      new TableCell({
+        width: { size: fcol[i], type: WidthType.DXA },
+        verticalAlign: "center",
+        borders: c.borders || noBorders,
+        shading: c.fill ? { fill: c.fill, type: ShadingType.CLEAR, color: "auto" } : undefined,
+        margins: c.borders ? { top: 50, bottom: 50, left: 100, right: 100 } : { top: 0, bottom: 0, left: 40, right: 40 },
+        children: c.children,
+      }),
+    ),
+  });
+const B = (s) => t(s, { size: fs8, bold: true });
+const N = (s) => t(s, { size: fs8 });
+const gap = (mid = empty, right = empty) => frow([empty, empty, mid, empty, right]);
 const flowchart = [
+  new Paragraph({ spacing: { after: 0 }, children: [t("Best Interest Determination (BID): When is one needed?", { size: 30, bold: true, color: NAVY })] }),
   new Paragraph({
-    alignment: AlignmentType.CENTER,
-    spacing: { after: 0 },
-    children: [new ImageRun({ type: "png", data: img, transformation: { width: imgW, height: Math.round((imgW * 1850) / 2450) },
-      altText: { title: "BID flowchart", description: "Decision flowchart for when a McKinney-Vento Best Interest Determination is needed", name: "bid-flowchart" } })],
+    spacing: { after: 100 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 12, color: GOLD, space: 2 } },
+    children: [t("McKinney-Vento school selection · City Schools McKinney-Vento Program · based on 42 U.S.C. § 11432(g)(3), COMAR 13A.05.09.04 and the MSDE BID FAQ", { size: 16, color: "444444" })],
+  }),
+  new Table({
+    width: { size: W_LANDSCAPE, type: WidthType.DXA },
+    columnWidths: fcol,
+    rows: [
+      frow([empty, empty, fbox("start", "Student identified as eligible for McKinney-Vento (liaison confirms)"), empty,
+        fbox("note", null, [B("Every path: "), N("immediate enrollment, needs assessment, confidentiality, and documentation. Liaison line: 443-642-2424")])]),
+      gap(arrow("", "down")),
+      frow([
+        fbox("nobid", "No BID needed: needs assessment & support", "The school of origin is also the local school, so there's no school choice to make. Keep the student enrolled; assess needs (meals, uniforms, supplies, fees, health, academics) and refer as needed."),
+        arrow("NO", "left"),
+        fbox("q", "Q1. Does the student's temporary residence put them outside the attendance zone of their school of origin?"),
+        empty, empty]),
+      gap(arrow("YES", "down")),
+      frow([
+        fbox("nobid", "No formal BID: honor the choice", [N("The presumption for the school of origin doesn't apply when it's contrary to the parent's or youth's request. Enroll in the local school "), B("immediately"), N(", even without records; explain the right to stay in the school of origin and document the informed choice; needs assessment & supports.")]),
+        arrow("Local school", "left"),
+        fbox("q", "Q2. Which school does the parent / guardian or unaccompanied youth want?"),
+        empty, empty]),
+      gap(arrow("School of origin, or unsure", "down")),
+      frow([empty, empty,
+        fbox("q", "Q3. Is the parent or youth unsure, or does the school system have concerns that the school of origin is not in the student's best interest?"),
+        arrow("NO", "right"),
+        fbox("nobid", "No formal BID: presumption stands", "Keep the student in the school of origin; arrange transportation; document the decision; needs assessment & supports.")]),
+      gap(arrow("YES", "down")),
+      frow([
+        fbox("act", "Revisit when…", null, [
+          "The family moves again",
+          "The student moves up a school level (the feeder school counts as school of origin)",
+          "The student becomes permanently housed: they may stay in the school of origin for the rest of that school year, no new BID needed"]),
+        empty,
+        fbox("bid", "Formal BID meeting (liaison leads)", "Presume the school of origin is in the student's best interest and give priority to the parent's or youth's request. Consider student-centered factors:", [
+          "Impact of moving on achievement, education, health and safety",
+          "Time left in the school year; age and grade; IEP / 504 / EL services",
+          "Attendance, relationships, the student's wishes; travel time (not cost)"]),
+        arrow("Decide", "right"),
+        fbox("act", "Decision", null, [
+          [B("Agree: "), N("enroll in the chosen school; transportation to the school of origin if chosen; supports continue")],
+          [B("School system decides against the parent's or youth's request: "), N("written explanation and notice of the right to appeal. The student stays in the requested school, with transportation, while the dispute is resolved.")]])]),
+    ],
+  }),
+  new Paragraph({
+    spacing: { before: 80, after: 0 },
+    children: [t("Key: ", { size: 15, bold: true }), t("Yellow = question   ", { size: 15 }), t("Green = no formal BID (needs assessment & support)   ", { size: 15, color: GREEN }), t("Red = formal BID", { size: 15, color: RED })],
   }),
 ];
 
