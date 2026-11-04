@@ -63,11 +63,13 @@ Give each table the cards below. Sort them into three piles: **Likely eligible â
 6. Tiana's family moved in with her grandmother. Tiana mentions "we had to leave our old place."
 7. A newly enrolled student has no records and says they're "staying with people."
 8. Jordan lives in a trailer with no running water or electricity.
+9. Ethan's family sold their home and is temporarily staying in a furnished short-term rental while waiting to close on a new house.
+10. Sophia and her younger brother recently moved in with their aunt after leaving their previous residence.
 
 **Answer key:**
 - **Likely eligible:** 1 (doubled up after losing housing), 2 (motel for lack of alternatives), 3 (unaccompanied youth), 5 (car and shelter), 8 (inadequate housing).
-- **Not enough information, refer:** 6 (the reason for moving matters) and 7 (needs a private conversation with the liaison).
-- **Likely not eligible:** 4 (a planned move with fixed, adequate housing).
+- **Not enough information, refer:** 6 (the reason for moving matters), 7 (needs a private conversation with the liaison), and 10 (potentially doubled up: more information is needed to know whether the move resulted from loss of housing, economic hardship, safety concerns, or another qualifying situation).
+- **Likely not eligible:** 4 (a planned move with fixed, adequate housing) and 9 (although temporary, the housing is planned and adequate, not caused by loss of housing, economic hardship, or a similar reason).
 
 **Debrief:** which cards caused the most debate? Why is "refer when unsure" the safest rule?
 
